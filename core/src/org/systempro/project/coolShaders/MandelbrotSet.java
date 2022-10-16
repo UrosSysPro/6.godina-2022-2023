@@ -34,6 +34,10 @@ public class MandelbrotSet extends BasicScreen {
 
         ShaderProgram.pedantic=false;
         shader=new ShaderProgram(vertex,fragment);
+        shader.bind();
+        float w=Gdx.graphics.getWidth();
+        float h=Gdx.graphics.getHeight();
+        shader.setUniform2fv("screenSize",new float[]{w,h},0,2);
 
         System.out.println("shader:"+shader.getLog());
     }
@@ -47,6 +51,15 @@ public class MandelbrotSet extends BasicScreen {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        shader.bind();
+        float w=Gdx.graphics.getWidth();
+        float h=Gdx.graphics.getHeight();
+        shader.setUniform2fv("screenSize",new float[]{w,h},0,2);
 
     }
 }
