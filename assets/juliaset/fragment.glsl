@@ -1,17 +1,12 @@
 varying vec2 v_pos;
+uniform vec2 mouse;
 uniform vec2 screenSize;
-uniform vec3 info;
 
-void main() {
-    vec2 c=v_pos*2.0;
-    c.x*=screenSize.x/screenSize.y;
-
-//    c-=info.xy;
-    c*=info.z;
-    c+=info.xy;
-//    c+=info.xy*info.z;
-
-    vec2 z=vec2(0.0);
+void main(){
+//    vec2 c=vec2(0.0);
+    vec2 c=mouse;
+    vec2 z=v_pos*2.0;
+    z.x*=screenSize.x/screenSize.y;
     int izlaz=0;
     int preciznost=30;
     for(int i=0;i<preciznost;i++){
