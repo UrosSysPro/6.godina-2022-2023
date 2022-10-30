@@ -29,8 +29,12 @@ public class TestScreen extends BasicScreen {
         ScreenUtils.clear(0,0,0,1);
         camera2d.update();
 
+
         batch.begin();
-        batch.draw(regions[7][0],100,100,100,100);
+        for(int i=0;i<10;i++){
+            batch.draw(regions[7][0],i*50,100,50,50);
+        }
         batch.end();
+
     }
 }
