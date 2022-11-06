@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.Disposable;
 import org.systempro.project.camera.Camera2d;
 
-public class TextureRenderer {
+public class TextureRenderer implements Disposable {
     private int maxRects,rectsToDraw,vertexSize;
     private Mesh mesh;
     private ShaderProgram shader;
@@ -68,5 +69,11 @@ public class TextureRenderer {
         shader.setUniformMatrix("combined",camera2d.combined);
         mesh.render(shader, GL20.GL_TRIANGLES,0,rectsToDraw*6);
         rectsToDraw=0;
+    }
+
+    @Override
+    public void dispose() {
+        shader.dispose();
+        mesh.dispose();
     }
 }
