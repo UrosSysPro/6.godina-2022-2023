@@ -1,18 +1,18 @@
 package org.systempro.project.shaders;
 
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import org.systempro.project.camera.Camera2d;
 
 public class TextureRenderer {
     private int maxRects,rectsToDraw,vertexSize;
     private Mesh mesh;
     private ShaderProgram shader;
     private float[] vertices;
-
+    public Texture texture;
+    public Camera2d camera2d;
     public TextureRenderer(){
 
         maxRects=10000;
@@ -34,6 +34,11 @@ public class TextureRenderer {
             indices[i*6+5]=(short)(index+2);
         }
         mesh.setIndices(indices);
+        ShaderProgram.pedantic=false;
+        String vertex= Gdx.files.internal("textureRenderer/vertex.glsl").readString();
+        String fragment= Gdx.files.internal("textureRenderer/fragment.glsl").readString();
+        shader=new ShaderProgram(vertex,fragment);
+        System.out.println("Shader log:"+shader.getLog());
     }
     public void draw(TextureRegion region,float x,float y,float width,float height){
         if(rectsToDraw>=maxRects)flush();
@@ -45,12 +50,22 @@ public class TextureRenderer {
                 vertices[index+1]=y+j*height;
                 vertices[index+2]=region.getRegionX()+i*region.getRegionWidth();
                 vertices[index+3]=region.getRegionY()+j*region.getRegionHeight();
+
+                vertices[index+2]/=region.getTexture().getWidth();
+                vertices[index+3]/=region.getTexture().getHeight();
             }
         }
+//        for(int i=0;i<4*vertexSize;i++){
+//            System.out.println(vertices[i]);
+//        }
         rectsToDraw++;
     }
     public void flush(){
         shader.bind();
+        mesh.setVertices(vertices);
+        texture.bind(0);
+        shader.setUniformi("texture_0",0);
+        shader.setUniformMatrix("combined",camera2d.combined);
         mesh.render(shader, GL20.GL_TRIANGLES,0,rectsToDraw*6);
         rectsToDraw=0;
     }

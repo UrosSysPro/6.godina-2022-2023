@@ -28,6 +28,9 @@ public class Camera2d {
     public void setScale(float scale) {
         this.scale.setToScaling(scale,scale);
     }
+    public void setScale(float x,float y) {
+        this.scale.setToScaling(x,y);
+    }
 
     public void setSize(float width, float height) {
         size.setToScaling(2f/width,2f/height);
