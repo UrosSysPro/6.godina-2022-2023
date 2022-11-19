@@ -5,9 +5,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
-import org.systempro.project.camera.TestScreen;
 import org.systempro.project.coolShaders.JuliaSet;
 import org.systempro.project.coolShaders.MandelbrotSet;
+import org.systempro.project.maptest.TestScreen;
 
 public class Main extends Game {
 

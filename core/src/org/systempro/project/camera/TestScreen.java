@@ -34,7 +34,7 @@ public class TestScreen extends BasicScreen {
         texture=new Texture(Gdx.files.internal("spriteSheet.png"));
         camera2d=new Camera2d();
         camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        camera2d.setScale(1,-1);
+//        camera2d.setScale(1,-1);
         camera2d.setTranslation(-Gdx.graphics.getWidth()/2,-Gdx.graphics.getHeight()/2);
         regions=TextureRegion.split(texture,16,16);
         renderer=new TextureRenderer();
@@ -42,7 +42,7 @@ public class TestScreen extends BasicScreen {
         renderer.camera2d=camera2d;
 
         random=new Random();
-        n=2000;
+        n=100;
         map=new TextureRegion[n][n];
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
