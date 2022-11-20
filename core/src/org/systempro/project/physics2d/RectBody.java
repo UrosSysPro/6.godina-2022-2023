@@ -39,4 +39,12 @@ public class RectBody extends PhysicsBody {
         renderer.setColor(Color.GREEN);
         renderer.rect(v.x-width/2f,v.y-height/2f,width/2f,height/2,width,height,1f,1f,a);
     }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
 }

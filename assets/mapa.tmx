@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="14">
- <tileset firstgid="1" source="./spriteSheet.tsx"/>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="17">
+ <tileset firstgid="1" source="spriteSheet.tsx"/>
  <layer id="1" name="Tile Layer 1" width="30" height="20">
   <data encoding="csv">
 1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -49,7 +49,7 @@
 54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,54,0,54,54,54,54,54,54,54,54,54,54,54,54,54
 </data>
  </layer>
- <objectgroup id="2" name="Object Layer 1">
+ <objectgroup id="2" name="objects">
   <object id="9" name="spawn" x="20.75" y="184.5">
    <point/>
   </object>
