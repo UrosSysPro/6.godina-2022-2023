@@ -3,7 +3,10 @@ package org.systempro.project.maptest;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapLayers;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -14,11 +17,11 @@ import org.systempro.project.BasicScreen;
 import org.systempro.project.camera.Camera2d;
 
 public class TestScreen extends BasicScreen {
-    TiledMapRenderer mapRenderer;
-    TiledMap mapa;
-    Camera2d camera;
-    int x=0,y=0;
-    float scale=1;
+    public TiledMapRenderer mapRenderer;
+    public TiledMap mapa;
+    public Camera2d camera;
+    public int x=0,y=0;
+    public float scale=1;
     @Override
     public void show() {
         float width=Gdx.graphics.getWidth();
@@ -30,6 +33,8 @@ public class TestScreen extends BasicScreen {
         camera.setRotate(0);
         mapa=new TmxMapLoader().load("mapa.tmx");
         mapRenderer=new OrthoCachedTiledMapRenderer(mapa);
+//        MapLayers layers=mapa.getLayers();
+
     }
 
     @Override
@@ -46,14 +51,25 @@ public class TestScreen extends BasicScreen {
         camera.setTranslation(-x,y);
         camera.setScale(scale,scale);
         camera.update();
-        camera.update();
-        mapRenderer.setView(camera.combined4,-1000,-1000,1000,1000);
-//        mapRenderer.setView();
+        mapRenderer.setView(
+            camera.combined4,
+            -camera.position.x,
+            -camera.position.y,
+            1f/camera.size.x,
+            1f/camera.size.y
+        );
+        Gdx.gl20.glEnable(GL20.GL_BLEND);
+        Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
         mapRenderer.render();
     }
 
     @Override
     public void dispose() {
         mapa.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        camera.setSize(width,height);
     }
 }
