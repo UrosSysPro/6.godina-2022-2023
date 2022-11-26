@@ -15,6 +15,13 @@ public abstract class PhysicsBody {
         v.y*=SCALE;
         return v;
     }
+    public Vector2 getVelocity(){
+        return new Vector2(body.getLinearVelocity());
+    }
+    public PhysicsBody setVelocity(Vector2 velocity){
+        body.setLinearVelocity(velocity);
+        return this;
+    }
     public float getAngle(){
         return body.getAngle();
     }

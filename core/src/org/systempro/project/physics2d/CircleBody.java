@@ -35,4 +35,8 @@ public class CircleBody extends PhysicsBody{
         renderer.setColor(Color.RED);
         renderer.circle(v.x,v.y,r);
     }
+
+    public float getRadius() {
+        return r;
+    }
 }

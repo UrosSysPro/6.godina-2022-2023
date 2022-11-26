@@ -51,7 +51,7 @@ public class TestScreen extends BasicScreen {
         shapeRenderer=new ShapeRenderer();
         texture=new Texture(Gdx.files.internal("spriteSheet.png"));
         regions=TextureRegion.split(texture,16,16);
-        world=new World(new Vector2(0,10),false);
+        world=new World(new Vector2(0,-10),false);
 
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();
@@ -98,6 +98,8 @@ public class TestScreen extends BasicScreen {
         if(Gdx.input.isKeyPressed(Input.Keys.D))x+=speed;
         if(Gdx.input.isKeyPressed(Input.Keys.Q))scale*=1.05;
         if(Gdx.input.isKeyPressed(Input.Keys.E))scale*=0.95;
+
+        world.step(delta,10,10);
 
         Vector2 pos=player.getPosition();
         camera.setTranslation(-pos.x, -pos.y);
