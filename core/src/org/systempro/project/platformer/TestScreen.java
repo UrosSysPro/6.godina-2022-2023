@@ -43,15 +43,21 @@ public class TestScreen extends BasicScreen {
         camera2d.update();
         mapRenderer.setView(camera2d.combined4,-x-width/2,-y-height/2,width,height);
 
-        map.getLayers().get("back1").setOffsetX(-x/10);
-        map.getLayers().get("back1").setOffsetY(y/10);
-        map.getLayers().get("front1").setOffsetX(x/10);
-        map.getLayers().get("front1").setOffsetY(-y/10);
+//        map.getLayers().get("back1").setOffsetX(-x/10);
+//        map.getLayers().get("back1").setOffsetY(y/10);
+//        map.getLayers().get("front1").setOffsetX(x/10);
+//        map.getLayers().get("front1").setOffsetY(-y/10);
         mapRenderer.render();
     }
 
     @Override
     public void dispose() {
+    }
 
+    @Override
+    public void resize(int width, int height) {
+        width=Gdx.graphics.getWidth();
+        height=Gdx.graphics.getHeight();
+        camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
     }
 }
