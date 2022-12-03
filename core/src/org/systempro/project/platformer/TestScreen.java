@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.camera.Camera2d;
+import org.systempro.project.physics2d.PlazmaBody;
 import org.systempro.project.physics2d.RectBody;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class TestScreen extends BasicScreen {
 
     World world;
     ArrayList<RectBody> walls;
-    RectBody player;
+    public Player player;
 
     @Override
     public void show() {
@@ -49,8 +50,8 @@ public class TestScreen extends BasicScreen {
             if(Objects.equals(object.getName(), "spawn")){
                 float x= (float) object.getProperties().get("x");
                 float y= (float) object.getProperties().get("y");
-                player=new RectBody(world,x+10,y+10,20,20);
-                player.body.setFixedRotation(true);
+                PlazmaBody hitbox=new PlazmaBody(world,x,y,50,100);
+                player=new Player(hitbox);
             }else{
                 float x= (float) object.getProperties().get("x");
                 float y= (float) object.getProperties().get("y");
@@ -63,23 +64,26 @@ public class TestScreen extends BasicScreen {
         }
 
         mapRenderer=new OrthogonalTiledMapRenderer(map);
+
+        world.setContactListener(new CollisionListener());
+        Gdx.input.setInputProcessor(new GameInputProcessor(this));
     }
 
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0,0,0,1);
 
-        Vector2 speed=player.getVelocity();
+        Vector2 speed=player.hitbox.getVelocity();
         if(Gdx.input.isKeyJustPressed(Input.Keys.W))speed.y=10;
         if(Gdx.input.isKeyPressed(Input.Keys.A))speed.x=-5;
         if(Gdx.input.isKeyPressed(Input.Keys.D))speed.x=5;
         if(speed.y<-1)speed.y-=10*delta;
-        player.setVelocity(speed);
+        player.hitbox.setVelocity(speed);
 
         world.step(delta,10,10);
 
-        float x=player.getPosition().x;
-        float y=player.getPosition().y;
+        float x=player.hitbox.getPosition().x;
+        float y=player.hitbox.getPosition().y;
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();
         camera2d.setTranslation(-x,-y);
@@ -89,13 +93,13 @@ public class TestScreen extends BasicScreen {
         mapRenderer.render();
         shapeRenderer.setProjectionMatrix(camera2d.combined4);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        player.debugDraw(shapeRenderer);
+        player.draw(shapeRenderer);
         shapeRenderer.end();
 
         if(Gdx.input.isKeyPressed(Input.Keys.F3)){
             shapeRenderer.setProjectionMatrix(camera2d.combined4);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            player.debugDraw(shapeRenderer);
+            player.draw(shapeRenderer);
             for(RectBody wall : walls){
                 wall.debugDraw(shapeRenderer);
             }
