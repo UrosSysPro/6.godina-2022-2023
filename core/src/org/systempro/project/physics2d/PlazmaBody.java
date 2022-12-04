@@ -9,7 +9,7 @@ public class PlazmaBody extends PhysicsBody{
 
     public float width,height;
     public Fixture fixtureTop,fixtureBottom,fixtureCenter;
-    public Fixture hitBoxLeft,hitBoxRight,hitBoxBottom;
+    public Fixture sensorLeft, sensorRight, sensorBottom;
 
 
     public PlazmaBody(World world,float x,float y,float width,float height){
@@ -51,23 +51,23 @@ public class PlazmaBody extends PhysicsBody{
         float hh=kh/2;
         fixtureDef.shape=shape;
 
-        float hx=kw+hw;
+        float hx=kw;
         shape.setAsBox(
-            hw/SCALE,
-            hh/SCALE,
+            2/SCALE,
+            kh/SCALE,
             new Vector2(hx/SCALE,0),
             0
         );
-        hitBoxRight= body.createFixture(fixtureDef);
+        sensorRight = body.createFixture(fixtureDef);
 
         hx=-hx;
         shape.setAsBox(
-            hw/SCALE,
-            hh/SCALE,
+            2/SCALE,
+            kh/SCALE,
             new Vector2(hx/SCALE,0),
             0
         );
-        hitBoxLeft= body.createFixture(fixtureDef);
+        sensorLeft = body.createFixture(fixtureDef);
 
         shape.setAsBox(
             kw/2/SCALE,
@@ -75,11 +75,11 @@ public class PlazmaBody extends PhysicsBody{
             new Vector2(0,-(height/2+5)/SCALE),
             0
         );
-        hitBoxBottom= body.createFixture(fixtureDef);
+        sensorBottom = body.createFixture(fixtureDef);
 
-        hitBoxBottom.setSensor(true);
-        hitBoxLeft.setSensor(true);
-        hitBoxRight.setSensor(true);
+        sensorBottom.setSensor(true);
+        sensorLeft.setSensor(true);
+        sensorRight.setSensor(true);
 
         body.setFixedRotation(true);
     }

@@ -4,9 +4,11 @@ import org.systempro.project.physics2d.PhysicsBody;
 import org.systempro.project.physics2d.RectBody;
 
 public class Platform {
-    public PhysicsBody hitbox;
+    public RectBody hitbox;
 
-    public Platform(PhysicsBody hitbox){
+    public Platform(RectBody hitbox){
+
         this.hitbox=hitbox;
+        hitbox.getFixture().setUserData(this);
     }
 }

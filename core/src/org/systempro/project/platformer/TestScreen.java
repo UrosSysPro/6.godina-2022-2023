@@ -28,7 +28,7 @@ public class TestScreen extends BasicScreen {
     ShapeRenderer shapeRenderer;
 
     World world;
-    ArrayList<RectBody> walls;
+    ArrayList<Platform> walls;
     public Player player;
 
     @Override
@@ -57,9 +57,9 @@ public class TestScreen extends BasicScreen {
                 float y= (float) object.getProperties().get("y");
                 float w= (float) object.getProperties().get("width");
                 float h= (float) object.getProperties().get("height");
-                RectBody wall=new RectBody(world,x+w/2,y+h/2,w,h);
-                wall.setType(BodyDef.BodyType.StaticBody);
-                walls.add(wall);
+                RectBody hitbox=new RectBody(world,x+w/2,y+h/2,w,h);
+                hitbox.setType(BodyDef.BodyType.StaticBody);
+                walls.add(new Platform(hitbox));
             }
         }
 
@@ -73,12 +73,7 @@ public class TestScreen extends BasicScreen {
     public void render(float delta) {
         ScreenUtils.clear(0,0,0,1);
 
-        Vector2 speed=player.hitbox.getVelocity();
-        if(Gdx.input.isKeyJustPressed(Input.Keys.W))speed.y=10;
-        if(Gdx.input.isKeyPressed(Input.Keys.A))speed.x=-5;
-        if(Gdx.input.isKeyPressed(Input.Keys.D))speed.x=5;
-        if(speed.y<-1)speed.y-=10*delta;
-        player.hitbox.setVelocity(speed);
+        player.update(delta);
 
         world.step(delta,10,10);
 
@@ -100,8 +95,8 @@ public class TestScreen extends BasicScreen {
             shapeRenderer.setProjectionMatrix(camera2d.combined4);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             player.draw(shapeRenderer);
-            for(RectBody wall : walls){
-                wall.debugDraw(shapeRenderer);
+            for(Platform wall : walls){
+                wall.hitbox.debugDraw(shapeRenderer);
             }
             shapeRenderer.end();
         }

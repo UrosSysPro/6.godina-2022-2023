@@ -12,12 +12,43 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-//        if(keycode== Input.Keys.W)
+        if(keycode==Input.Keys.W){
+            game.player.keyUp=true;
+            return true;
+        }
+        if(keycode==Input.Keys.S){
+            game.player.keyDown=true;
+            return true;
+        }
+        if(keycode==Input.Keys.A){
+            game.player.keyLeft=true;
+            return true;
+        }
+        if(keycode==Input.Keys.D){
+            game.player.keyRight=true;
+            return true;
+        }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
+        if(keycode==Input.Keys.W){
+            game.player.keyUp=false;
+            return true;
+        }
+        if(keycode==Input.Keys.S){
+            game.player.keyDown=false;
+            return true;
+        }
+        if(keycode==Input.Keys.A){
+            game.player.keyLeft=false;
+            return true;
+        }
+        if(keycode==Input.Keys.D){
+            game.player.keyRight=false;
+            return true;
+        }
         return false;
     }
 

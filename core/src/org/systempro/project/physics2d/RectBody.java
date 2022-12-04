@@ -47,4 +47,8 @@ public class RectBody extends PhysicsBody {
     public float getHeight() {
         return height;
     }
+
+    public Fixture getFixture() {
+        return fixture;
+    }
 }
