@@ -1,4 +1,8 @@
+
 android {
+    lintOptions {
+        abortOnError false // make sure you're paying attention to the linter output!
+    }
     buildToolsVersion "31.0.0"
     compileSdkVersion 31
     sourceSets {
@@ -26,7 +30,17 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+            proguardFile 'proguard-project.txt'
+        }
+//        release {
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+        debug {
+            minifyEnabled true
+            proguardFile getDefaultProguardFile('proguard-android-optimize.txt')
+            proguardFile 'proguard-project.txt'
         }
     }
 }
