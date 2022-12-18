@@ -14,7 +14,7 @@ public class Container extends SingleChildWidget{
 
     @Override
     public void draw(WidgetRenderer renderer) {
-        renderer.draw(position.x,position.y,size.width,size.height);
+        renderer.draw(position.x,position.y,size.width,size.height,Color.RED);
         super.draw(renderer);
     }
 }

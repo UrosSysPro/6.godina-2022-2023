@@ -19,10 +19,11 @@ public class WidgetRenderer implements Disposable {
 
         maxRects=10000;
         rectsToDraw=0;
-        vertexSize=4;
+        vertexSize=8;
         mesh=new Mesh(true,maxRects*4,maxRects*6,
             new VertexAttribute(VertexAttributes.Usage.Position,2,"pos"),
-            new VertexAttribute(VertexAttributes.Usage.TextureCoordinates,2,"texCoords")
+            new VertexAttribute(VertexAttributes.Usage.TextureCoordinates,2,"texCoords"),
+            new VertexAttribute(VertexAttributes.Usage.ColorUnpacked,4,"color")
         );
         short[] indices=new short[maxRects*6];
         vertices=new float[maxRects*4*vertexSize];
@@ -42,7 +43,7 @@ public class WidgetRenderer implements Disposable {
         shader=new ShaderProgram(vertex,fragment);
         System.out.println("Shader log:"+shader.getLog());
     }
-    public void draw(float x, float y, float width, float height){
+    public void draw(float x, float y, float width, float height,Color color){
         if(rectsToDraw>=maxRects)flush();
 
         for(int i=0;i<2;i++){
@@ -52,6 +53,10 @@ public class WidgetRenderer implements Disposable {
                 vertices[index+1]=y+j*height;
                 vertices[index+2]=i;
                 vertices[index+3]=j;
+                vertices[index+4]=color.r;
+                vertices[index+5]=color.g;
+                vertices[index+6]=color.b;
+                vertices[index+7]=color.a;
             }
         }
 //        for(int i=0;i<4*vertexSize;i++){
