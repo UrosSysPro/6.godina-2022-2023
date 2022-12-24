@@ -9,9 +9,11 @@ class Scene {
   var renderer:WidgetRenderer = null
   var camera2d:Camera2d = null
   var root:Widget = null
+  var inputProcessor:SceneInputProcessor=null;
 
   def this(root: Widget) {
-    this()
+    this();
+    inputProcessor=new SceneInputProcessor();
     this.root = root;
     renderer = new WidgetRenderer
     camera2d = new Camera2d

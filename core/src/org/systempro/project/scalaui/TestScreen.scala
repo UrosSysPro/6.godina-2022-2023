@@ -1,7 +1,7 @@
 package org.systempro.project.scalaui
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.{Gdx, Input}
 import com.badlogic.gdx.utils.ScreenUtils
 import org.systempro.project.BasicScreen
 
@@ -17,7 +17,7 @@ class TestScreen extends BasicScreen{
           child =new Stack(
             children = List(
               new Align(
-                alignment = Alignment.center,
+                alignment = Alignment.bottomCenter,
                 child = new Column(
                   children = List(
                     red(),
@@ -38,6 +38,7 @@ class TestScreen extends BasicScreen{
         )
       )
     );
+    Gdx.input.setInputProcessor(scene.inputProcessor);
   }
 
   override def render(delta: Float): Unit = {
