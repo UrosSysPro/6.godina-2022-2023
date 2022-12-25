@@ -13,7 +13,7 @@ class Scene {
 
   def this(root: Widget) {
     this();
-    inputProcessor=new SceneInputProcessor();
+    inputProcessor=new SceneInputProcessor(this);
     this.root = root;
     renderer = new WidgetRenderer
     camera2d = new Camera2d

@@ -1,6 +1,5 @@
 package org.systempro.project.scalaui
 
-import com.badlogic.gdx.input.GestureDetector
 import com.badlogic.gdx.math.Vector2
 import org.systempro.project.ui.{Size, WidgetRenderer}
 
@@ -42,7 +41,8 @@ class SingleChildWidget(var child:Widget=null) extends Widget {
 
   override def addListenersToStack(stack: mutable.Stack[Widget],mousePos:Vector2): Unit = {
     this match {
-      case widget:GestureDetector => stack.push(widget);
+      case widget: GestureDetector => stack.push(widget);
+      case _ => ;
     }
     if(child!=null&&child.containsPoint(mousePos)) {
       child.addListenersToStack(stack, mousePos)

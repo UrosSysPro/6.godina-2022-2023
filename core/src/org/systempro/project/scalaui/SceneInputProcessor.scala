@@ -1,8 +1,11 @@
 package org.systempro.project.scalaui
 
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.math.Vector2
 
-class SceneInputProcessor extends InputProcessor{
+import scala.collection.mutable
+
+class SceneInputProcessor(var scene:Scene) extends InputProcessor{
   override def keyDown(keycode: Int): Boolean = {
     false;
   }
@@ -16,6 +19,9 @@ class SceneInputProcessor extends InputProcessor{
   }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+    var stack=new mutable.Stack[Widget]();
+    scene.root.addListenersToStack(stack,new Vector2(screenX,screenY));
+    println(stack.size);
     false;
   }
 
