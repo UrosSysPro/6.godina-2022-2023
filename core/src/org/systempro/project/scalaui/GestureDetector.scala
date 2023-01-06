@@ -2,7 +2,8 @@ package org.systempro.project.scalaui
 
 import com.badlogic.gdx.InputProcessor
 
-class GestureDetector extends SingleChildWidget with InputProcessor{
+class GestureDetector(child:Widget=null,var focusable:Boolean=true) extends SingleChildWidget(child:Widget) with InputProcessor{
+  var mouseOver=false;
   override def keyDown(keycode: Int): Boolean = false;
 
   override def keyUp(keycode: Int): Boolean = false;

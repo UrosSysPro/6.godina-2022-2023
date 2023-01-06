@@ -48,30 +48,12 @@ class TestScreen extends BasicScreen{
   override def resize(width: Int, height: Int): Unit = {
     scene.resize(width,height);
   }
-
-  def kvadrat():Widget={
-    new SizedBox(
-      width = 100,
-      height = 100,
-      child =new Padding(
-        child = new Container(
-          color = Color.GOLD,
-          child = new GestureDetector(){
-            override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
-              return true;
-            }
-          }
-        ),
-        padding = 10
-      )
-    );
-  }
   def red():Widget={
     new Row(
       children = List(
-        kvadrat(),
-        kvadrat(),
-        kvadrat()
+        new TestWidget(),
+        new TestWidget(),
+        new TestWidget()
       )
     )
   }

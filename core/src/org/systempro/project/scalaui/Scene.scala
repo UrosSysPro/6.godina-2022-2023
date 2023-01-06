@@ -10,6 +10,7 @@ class Scene {
   var camera2d:Camera2d = null
   var root:Widget = null
   var inputProcessor:SceneInputProcessor=null;
+  var focused:GestureDetector=null;
 
   def this(root: Widget) {
     this();
