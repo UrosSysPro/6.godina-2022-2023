@@ -17,6 +17,7 @@ abstract class Widget {
 
   def animate(delta: Float): Unit
   def addListenersToStack(stack:mutable.Stack[Widget],mousePos:Vector2):Unit;
+  def addAllListenersToStack(stack:mutable.Stack[GestureDetector]):Unit;
   def containsPoint(point:Vector2):Boolean= {
       point.x>position.x&&
       point.y>position.y&&

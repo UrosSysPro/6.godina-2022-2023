@@ -29,4 +29,12 @@ abstract class MultiChildWidget(var children:List[Widget]=null) extends Widget {
       }
     }
   }
+
+  override def addAllListenersToStack(stack: mutable.Stack[GestureDetector]): Unit = {
+    if (children != null) {
+      for (child <- children) {
+        child.addAllListenersToStack(stack);
+      }
+    }
+  }
 }

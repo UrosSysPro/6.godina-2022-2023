@@ -25,6 +25,22 @@ class SceneInputProcessor(var scene:Scene) extends InputProcessor{
   }
 
   override def touchDown(screenX: Int, screenY: Int, pointer: Int, button: Int): Boolean = {
+
+    val allListeners = new mutable.Stack[GestureDetector]();
+    scene.root.addAllListenersToStack(allListeners);
+//    println(allListeners.size);
+    while (allListeners.nonEmpty) {
+      val listener = allListeners.pop();
+      val mouseover = listener.containsPoint(new Vector2(screenX, screenY));
+      if (!mouseover && listener.mouseOver) {
+        listener.mouseLeave(screenX, screenY);
+      }
+      if (mouseover && !listener.mouseOver) {
+        listener.mouseEnter(screenX, screenY);
+      }
+      listener.mouseOver = mouseover;
+    }
+
     val stack = new mutable.Stack[Widget]();
     scene.root.addListenersToStack(stack,new Vector2(screenX,screenY));
     while(stack.nonEmpty){
@@ -53,6 +69,22 @@ class SceneInputProcessor(var scene:Scene) extends InputProcessor{
   }
 
   override def mouseMoved(screenX: Int, screenY: Int): Boolean = {
+
+    val allListeners=new mutable.Stack[GestureDetector]();
+    scene.root.addAllListenersToStack(allListeners);
+//    println(allListeners.size);
+    while(allListeners.nonEmpty){
+      val listener=allListeners.pop();
+      val mouseover=listener.containsPoint(new Vector2(screenX,screenY));
+      if(!mouseover&&listener.mouseOver){
+        listener.mouseLeave(screenX, screenY);
+      }
+      if(mouseover&&!listener.mouseOver){
+        listener.mouseEnter(screenX,screenY);
+      }
+      listener.mouseOver=mouseover;
+    }
+
     val stack = new mutable.Stack[Widget]();
     scene.root.addListenersToStack(stack, new Vector2(screenX, screenY));
     while (stack.nonEmpty) {

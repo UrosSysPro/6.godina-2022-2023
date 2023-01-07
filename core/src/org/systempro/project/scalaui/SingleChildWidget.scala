@@ -48,4 +48,14 @@ class SingleChildWidget(var child:Widget=null) extends Widget {
       child.addListenersToStack(stack, mousePos)
     };
   }
+
+  override def addAllListenersToStack(stack: mutable.Stack[GestureDetector]): Unit = {
+    this match {
+      case widget: GestureDetector => stack.push(widget);
+      case _ => ;
+    }
+    if (child != null) {
+      child.addAllListenersToStack(stack)
+    };
+  }
 }

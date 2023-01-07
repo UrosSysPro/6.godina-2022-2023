@@ -17,6 +17,8 @@ class GestureDetector(child:Widget=null,var focusable:Boolean=true) extends Sing
   override def touchDragged(screenX: Int, screenY: Int, pointer: Int): Boolean = false
 
   override def mouseMoved(screenX: Int, screenY: Int): Boolean = false
+  def mouseLeave(screenX: Int, screenY: Int):Boolean=false;
+  def mouseEnter(screenX: Int, screenY: Int):Boolean=false;
 
   override def scrolled(amountX: Float, amountY: Float): Boolean = false
 }
