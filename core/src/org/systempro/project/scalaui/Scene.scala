@@ -3,10 +3,11 @@ package org.systempro.project.scalaui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.math.Vector2
+import com.badlogic.gdx.utils.Disposable
 import org.systempro.project.camera.Camera2d
 import org.systempro.project.ui.{Size, WidgetRenderer}
 
-class Scene {
+class Scene extends Disposable{
   var renderer:WidgetRenderer = null
   var camera2d:Camera2d = null
   var root:Widget = null
@@ -44,5 +45,9 @@ class Scene {
     camera2d.setTranslation(-width / 2, -height / 2)
     camera2d.setScale(1, -1)
     camera2d.update()
+  }
+
+  override def dispose(): Unit = {
+    renderer.dispose();
   }
 }

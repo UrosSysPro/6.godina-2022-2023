@@ -7,6 +7,7 @@ class Column(children:List[Widget]=null)extends MultiChildWidget(children:List[W
     size.set(maxSize);
     var totalHeight: Float = 0;
     var maxWidth: Float = 0;
+
     if (children != null) {
       var totalFlex:Float=0;
       children.foreach{
