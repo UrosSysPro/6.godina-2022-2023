@@ -8,10 +8,27 @@ class Column(children:List[Widget]=null)extends MultiChildWidget(children:List[W
     var totalHeight: Float = 0;
     var maxWidth: Float = 0;
     if (children != null) {
-      for (child <- children) {
-        val childSize = child.calculateSize(size);
-        totalHeight += childSize.height;
-        if (childSize.width > maxWidth) maxWidth = childSize.width;
+      var totalFlex:Float=0;
+      children.foreach{
+        case expanded:Expanded=>{
+          totalFlex+=expanded.flex;
+        }
+        case child:Widget=>{
+          val childSize = child.calculateSize(size);
+          totalHeight += childSize.height;
+          maxWidth=Math.max(maxWidth,childSize.width);
+        }
+      }
+
+      val remainingHeight=maxSize.height-totalHeight;
+      children.foreach{
+        case expanded: Expanded=>{
+          size.set(maxSize.width,expanded.flex/totalFlex*remainingHeight);
+          val childSize = expanded.calculateSize(size);
+          totalHeight += childSize.height;
+          maxWidth = Math.max(maxWidth, childSize.width);
+        }
+        case _ =>;
       }
       size.set(maxWidth, totalHeight);
     }

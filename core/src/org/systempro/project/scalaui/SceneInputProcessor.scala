@@ -79,7 +79,7 @@ class SceneInputProcessor(var scene:Scene) extends InputProcessor{
       if(!mouseover&&listener.mouseOver){
         listener.mouseLeave(screenX, screenY);
       }
-      if(mouseover&&!listener.mouseOver){
+      if(mouseover&& !listener.mouseOver){
         listener.mouseEnter(screenX,screenY);
       }
       listener.mouseOver=mouseover;

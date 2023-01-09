@@ -1,6 +1,7 @@
 package org.systempro.project.scalaui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.math.Vector2
 import org.systempro.project.camera.Camera2d
 import org.systempro.project.ui.{Size, WidgetRenderer}
@@ -32,6 +33,8 @@ class Scene {
   }
 
   def draw(): Unit = {
+    Gdx.gl20.glEnable(GL20.GL_BLEND)
+    Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
     root.draw(renderer)
     renderer.flush()
   }
