@@ -11,7 +11,7 @@ class UIBench extends BasicScreen{
   var scene:Scene=null;
 
   override def show(): Unit = {
-    val n=100;
+    val n=200;
     var columnList=List[Widget]();
     for(j <- 0 until n){
       var rowList=List[Widget]();
@@ -35,16 +35,17 @@ class UIBench extends BasicScreen{
     scene=new Scene(
       root = container
     )
-    println(container.size.width+" "+container.size.height);
-    println(Gdx.graphics.getWidth+" "+Gdx.graphics.getHeight);
     Gdx.input.setInputProcessor(scene.inputProcessor);
   }
 
   override def render(delta: Float): Unit = {
     ScreenUtils.clear(0,0,0,1);
-    Gdx.graphics.setTitle(""+Gdx.graphics.getFramesPerSecond);
+    val start=System.currentTimeMillis();
     scene.layout();
+    val layout=System.currentTimeMillis();
     scene.draw();
+    val draw=System.currentTimeMillis();
+    Gdx.graphics.setTitle(s"layout:${layout-start} draw:${draw-layout} fps:${Gdx.graphics.getFramesPerSecond}");
   }
 
   override def resize(width: Int, height: Int): Unit = {

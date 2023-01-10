@@ -1,6 +1,5 @@
 package org.systempro.project.scalaui
 import com.badlogic.gdx.math.Vector2
-import org.systempro.project.ui.{Size, WidgetRenderer}
 
 import scala.collection.mutable
 

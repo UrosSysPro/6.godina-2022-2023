@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import org.systempro.project.camera.Camera2d
-import org.systempro.project.ui.{Size, WidgetRenderer}
+import org.systempro.project.ui.Size
 
 class Scene extends Disposable{
   var renderer:WidgetRenderer = null
