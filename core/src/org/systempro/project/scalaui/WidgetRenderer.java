@@ -19,7 +19,7 @@ public class WidgetRenderer implements Disposable {
     public WidgetRenderer(){
         maxRects=10000;
         rectsToDraw=0;
-        vertexSize=16;
+        vertexSize=17;
 
         mesh=new Mesh(true,maxRects*4,maxRects*6,
             new VertexAttribute(VertexAttributes.Usage.Position,2,"pos"),
@@ -28,6 +28,7 @@ public class WidgetRenderer implements Disposable {
             new VertexAttribute(VertexAttributes.Usage.ColorUnpacked,4,"borderColor"),
             new VertexAttribute(VertexAttributes.Usage.Generic,1,"borderRadius"),
             new VertexAttribute(VertexAttributes.Usage.Generic,1,"borderWidth"),
+            new VertexAttribute(VertexAttributes.Usage.Generic,1,"blur"),
             new VertexAttribute(VertexAttributes.Usage.Generic,2,"size")
         );
         short[] indices=new short[maxRects*6];
@@ -50,6 +51,9 @@ public class WidgetRenderer implements Disposable {
             System.out.println("Shader log:"+shader.getLog());
     }
     public void draw(float x, float y, float width, float height,Color color){
+        draw(x,y,width,height,color,Color.CLEAR,0,0,0);
+    }
+    public void draw(float x, float y, float width, float height, Color color, Color borderColor,float borderRadius,float borderWidth,float blur){
         if(rectsToDraw>=maxRects)flush();
 
         for(int i=0;i<2;i++){
@@ -67,35 +71,19 @@ public class WidgetRenderer implements Disposable {
                 vertices[index+6]=color.b;
                 vertices[index+7]=color.a;
                 //borderColor
-                vertices[index+8] =0.4f;
-                vertices[index+9] =0.6f;
-                vertices[index+10]=0.9f;
-                vertices[index+11]=1;
+                vertices[index+8] =borderColor.r;
+                vertices[index+9] =borderColor.g;
+                vertices[index+10]=borderColor.b;
+                vertices[index+11]=borderColor.a;
                 //borderRadius
-                vertices[index+12]=20;
+                vertices[index+12]=borderRadius;
                 //borderWidth
-                vertices[index+13]=10;
+                vertices[index+13]=borderWidth;
+                //blur
+                vertices[index+14]=blur;
                 //size
-                vertices[index+14]=width;
-                vertices[index+15]=height;
-            }
-        }
-        rectsToDraw++;
-    }
-    public void draw(float x, float y, float width, float height, Color color, Matrix3 transform){
-        if(rectsToDraw>=maxRects)flush();
-
-        for(int i=0;i<2;i++){
-            for(int j=0;j<2;j++){
-                int index=rectsToDraw*4*vertexSize+(j*2+i)*vertexSize;
-                vertices[index+0]=x+i*width;
-                vertices[index+1]=y+j*height;
-                vertices[index+2]=i;
-                vertices[index+3]=j;
-                vertices[index+4]=color.r;
-                vertices[index+5]=color.g;
-                vertices[index+6]=color.b;
-                vertices[index+7]=color.a;
+                vertices[index+15]=width;
+                vertices[index+16]=height;
             }
         }
         rectsToDraw++;
