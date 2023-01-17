@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.utils.ScreenUtils
 import org.systempro.project.BasicScreen
+import org.systempro.project.scalaui.widgets.{Column, Container, Expanded, Padding, Row}
 
 
 class UIBench extends BasicScreen{
@@ -16,10 +17,12 @@ class UIBench extends BasicScreen{
     for(j <- 0 until n){
       var rowList=List[Widget]();
       for(i <- 0 until n) {
+        val container=new Container(color = Color.LIME);
         rowList = rowList :+ new Expanded(
-          child = new Padding(
-            padding = 1,
-            child = new Container(color = Color.LIME)
+          child =  new GestureDetector(
+            child = container,
+            mouseEnter = (_,_)=>{container.color=Color.WHITE;true},
+            mouseLeave = (_,_)=>{container.color=Color.LIME;true}
           )
         )
       }

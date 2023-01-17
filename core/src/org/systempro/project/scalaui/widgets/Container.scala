@@ -1,6 +1,7 @@
-package org.systempro.project.scalaui
+package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.graphics.Color
+import org.systempro.project.scalaui.{Shadow, SingleChildWidget, Widget, WidgetRenderer}
 
 class Container(
                  child:Widget=null,
@@ -8,11 +9,15 @@ class Container(
                  var borderColor:Color=Color.CLEAR,
                  var borderRadius:Float=0,
                  var borderWidth:Float=0,
-                 var blur:Float=0
+                 var blur:Float=0,
+                 var shadows:List[Shadow]=List()
                ) extends SingleChildWidget(child:Widget) {
 
   override def draw(renderer: WidgetRenderer): Unit = {
-    renderer.draw(position.x, position.y, size.width, size.height,color,borderColor,borderRadius,borderWidth,blur);
+    for(shadow<-shadows){
+      shadow.draw(renderer,position,size);
+    }
+    renderer.rect(position.x, position.y, size.width, size.height,color,borderColor,borderRadius,borderWidth,blur);
     super.draw(renderer);
   }
 }

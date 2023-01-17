@@ -1,4 +1,6 @@
-package org.systempro.project.scalaui
+package org.systempro.project.scalaui.widgets
+
+import org.systempro.project.scalaui.{SingleChildWidget, Widget}
 import org.systempro.project.ui.Size
 
 class SizedBox(child:Widget=null,var width:Int=10000,var height:Int=10000)

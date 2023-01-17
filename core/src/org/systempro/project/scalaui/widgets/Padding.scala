@@ -1,6 +1,8 @@
-package org.systempro.project.scalaui
+package org.systempro.project.scalaui.widgets
+
 import com.badlogic.gdx.math.Vector2
-import org.systempro.project.ui.{Size}
+import org.systempro.project.scalaui.{SingleChildWidget, Widget}
+import org.systempro.project.ui.Size
 
 class Padding(child:Widget=null,padding:Int=0) extends SingleChildWidget(child:Widget) {
 

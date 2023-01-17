@@ -1,5 +1,7 @@
-package org.systempro.project.scalaui
+package org.systempro.project.scalaui.widgets
+
 import com.badlogic.gdx.math.Vector2
+import org.systempro.project.scalaui.{SingleChildWidget, Widget}
 import org.systempro.project.ui.Size
 
 class Align(

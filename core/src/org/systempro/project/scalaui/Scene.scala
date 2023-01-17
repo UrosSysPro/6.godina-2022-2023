@@ -13,7 +13,6 @@ class Scene extends Disposable{
   var root:Widget = null
   var inputProcessor:SceneInputProcessor=null;
   var focused:GestureDetector=null;
-
   def this(root: Widget) {
     this();
     inputProcessor=new SceneInputProcessor(this);
