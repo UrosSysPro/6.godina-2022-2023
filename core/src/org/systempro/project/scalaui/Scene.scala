@@ -23,6 +23,11 @@ class Scene extends Disposable{
     val height = Gdx.graphics.getHeight
     resize(width, height)
     renderer.camera2d = camera2d
+
+    if(!Fonts.loaded){
+      Fonts.load();
+    }
+    renderer.font=Fonts.roboto.getRegion.getTexture;
   }
 
   def layout(): Unit = {
@@ -37,6 +42,9 @@ class Scene extends Disposable{
     Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA)
     root.draw(renderer)
     renderer.flush()
+  }
+  def animate(delta:Float): Unit ={
+    root.animate(delta);
   }
 
   def resize(width: Float, height: Float): Unit = {

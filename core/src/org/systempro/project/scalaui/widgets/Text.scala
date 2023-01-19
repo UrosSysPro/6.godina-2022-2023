@@ -8,18 +8,24 @@ import org.systempro.project.ui.Size
 
 import scala.collection.mutable
 
-class Text(var text:String,var font: BitmapFont,var color:Color=Color.WHITE) extends Widget{
+class Text(var text:String,var font: BitmapFont,var color:Color=Color.WHITE,var scale:Float=1) extends Widget{
   override def draw(renderer: WidgetRenderer): Unit = {
     var x:Float=0;
     var y:Float=0;
     for(c<-text){
       val glyph=font.getData.getGlyph(c);
-      renderer.glyph(glyph,color,x+glyph.xoffset+position.x,y+glyph.yoffset+position.y,glyph.width,glyph.height);
-      if(x+glyph.xadvance<size.width){
-        x+=glyph.xadvance;
+      renderer.glyph(
+        glyph,color,
+        x+position.x+glyph.xoffset*scale,
+        y+position.y+glyph.yoffset*scale,
+        glyph.width*scale,
+        glyph.height*scale
+      );
+      if(x+glyph.xadvance*scale<size.width){
+        x+=glyph.xadvance*scale;
       }else{
         x=position.x;
-        y+=font.getLineHeight;
+        y+=font.getLineHeight*scale;
       }
     }
 //    renderer.border(Color.ORANGE,position.x,position.y,size.width,size.height,5,0,0)
@@ -32,15 +38,15 @@ class Text(var text:String,var font: BitmapFont,var color:Color=Color.WHITE) ext
 
     for(c<-text){
       val glyph=font.getData.getGlyph(c);
-      if(width+glyph.xadvance<maxSize.width){
-        width+=glyph.xadvance;
+      if(width+glyph.xadvance*scale<maxSize.width){
+        width+=glyph.xadvance*scale;
       }else{
         maxWidth=Math.max(width,maxWidth);
-        width=glyph.xadvance;
-        height+=font.getLineHeight;
+        width=glyph.xadvance*scale;
+        height+=font.getLineHeight*scale;
       }
     }
-    height+=font.getLineHeight;
+    height+=font.getLineHeight*scale;
     maxWidth=Math.max(width,maxWidth);
     size.set(maxWidth,height);
   }

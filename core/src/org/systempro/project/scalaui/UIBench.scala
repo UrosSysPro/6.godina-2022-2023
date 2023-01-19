@@ -12,12 +12,12 @@ class UIBench extends BasicScreen{
   var scene:Scene=null;
 
   override def show(): Unit = {
-    val n=200;
+    val n=100;
     var columnList=List[Widget]();
     for(j <- 0 until n){
       var rowList=List[Widget]();
       for(i <- 0 until n) {
-        val container=new Container(color = Color.LIME);
+        val container=new Container(borderColor = Color.LIME);
         rowList = rowList :+ new Expanded(
           child =  new GestureDetector(
             child = container,

@@ -1,5 +1,6 @@
 package org.systempro.project;
 
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import org.systempro.project.Main;
@@ -11,6 +12,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("VI-godina-2022/23");
 		config.setWindowedMode(800,600);
+
 		new Lwjgl3Application(new Main(), config);
 	}
 }

@@ -24,5 +24,8 @@ abstract class Widget {
       point.x<position.x+size.width&&
       point.y<position.y+size.height
   };
-
+  def setKey(key:Key): Widget ={
+    key.widget=this;
+    this;
+  }
 }

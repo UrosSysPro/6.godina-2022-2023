@@ -23,12 +23,12 @@ class Button(
     super.draw(renderer);
   }
 
-  touchDown =(_,_,_,_)=> {
+  touchDown = (_,_,_,_) => {
     touchStart=System.currentTimeMillis();
     true;
   }
 
-  touchUp =(_,_,_,_)=> {
+  touchUp = (_,_,_,_) => {
     val touchEnd=System.currentTimeMillis();
     if(touchEnd-touchStart<300){
       onClick();
@@ -37,10 +37,25 @@ class Button(
   }
 }
 object Button{
-  def elevated(onClick:()=>Unit): Button ={
-    new Button(onClick=onClick);
+  def elevated(onClick:()=>Unit=()=>{},color:Color=Color.FOREST,borderColor:Color=Color.DARK_GRAY,borderRadius:Float=5,borderWidth:Float=3,child:Widget=null): Button ={
+    new Button(
+      child=child,
+      onClick=onClick,
+      color=color,
+      borderColor=borderColor,
+      borderRadius=borderRadius,
+      borderWidth=borderWidth,
+      blur = 1
+    );
   }
-  def outlined(onClick:()=>Unit): Button ={
-    new Button(onClick=onClick);
+  def outlined(onClick:()=>Unit=()=>{},borderColor:Color=Color.FOREST,borderRadius:Float=10,borderWidth:Float=4,child:Widget=null): Button ={
+    new Button(
+      child=child,
+      onClick=onClick,
+      borderColor=borderColor,
+      borderWidth=borderWidth,
+      borderRadius=borderRadius,
+      blur=1
+    );
   }
 }

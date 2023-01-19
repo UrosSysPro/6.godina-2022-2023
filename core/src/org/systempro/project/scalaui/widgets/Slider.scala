@@ -30,7 +30,7 @@ class Slider(
     var y: Float = position.y + padding;
     var width: Float = size.width - padding * 2;
     var height: Float = size.height - padding * 2;
-    renderer.rect(x, y, width, height, backgroundColor, Color.CLEAR, (if(direction==SliderDirection.horizontal)height else width) * roundness - 1, 0, 1);
+    renderer.rect(x, y, width, height, backgroundColor, backgroundColor, (if(direction==SliderDirection.horizontal)height else width) * roundness - 1, 0, 1);
 
     if (direction == SliderDirection.horizontal) {
       padding = (1 - foregroundWidth) * size.height / 2;
@@ -49,7 +49,7 @@ class Slider(
       y-=height;
     }
 
-    renderer.rect(x, y, width, height, foregroundColor, Color.CLEAR, (if(direction==SliderDirection.horizontal)height else width) * roundness - 1, 0, 1);
+    renderer.rect(x, y, width, height, foregroundColor, foregroundColor, (if(direction==SliderDirection.horizontal)height else width) * roundness - 1, 0, 1);
 
     if (direction == SliderDirection.horizontal) {
       padding = (1 - circleRadius) * size.height / 2;
@@ -67,7 +67,7 @@ class Slider(
       y+=(1-(value-min) / (max - min)) * (height-width);
       height=width;
     }
-    renderer.rect(x,y,width,height,circleColor,Color.CLEAR,width/2,0,1);
+    renderer.rect(x,y,width,height,circleColor,circleColor,width/2-1,0,1);
   }
 
   touchDown=(screenX,screenY,_,_)=> {

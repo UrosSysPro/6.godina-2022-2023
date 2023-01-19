@@ -22,14 +22,16 @@ void main(){
     d=rectSdf(pos,v_size/2.0-v_borderRadius-blur);
     d-=v_borderRadius;
     alfa=1.0-smoothstep(0.0,blur,d);
-    vec4 outterColor=v_borderColor*alfa;
+    vec4 outterColor=v_borderColor;
+    outterColor.a*=alfa;
     //inner color
     float innerBorderRadius=v_borderRadius-v_borderWidth;
     d=rectSdf(pos,v_size/2.0-innerBorderRadius-blur-v_borderWidth);
     d-=innerBorderRadius;
     alfa=1.0-smoothstep(0.0,blur,d);
 //    alfa=1.0-d/blur;
-    vec4 innerColor=v_color*alfa;
+    vec4 innerColor=v_color;
+    innerColor.a*=alfa;
 
     vec4 sdfColor=mix(outterColor,innerColor,alfa);
     gl_FragColor=mix(sdfColor,texture2D(font,v_texCoords)*v_color,v_imageAlpha);

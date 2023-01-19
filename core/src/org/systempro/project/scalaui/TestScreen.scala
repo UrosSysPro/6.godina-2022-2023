@@ -30,7 +30,7 @@ class TestScreen extends BasicScreen{
                         children = List(
                           new SizedBox(
                             width = 70,
-                            child = new Padding(padding = 10, child = new Container(color = Color.valueOf("515151"),
+                            child = new Padding(padding = EdgeInsets.all(10), child = new Container(color = Color.valueOf("515151"),
                               child = new GestureDetector(touchDown = (screnX, screenY, pointer, button) => {
                                 drawer.visible = true;
                                 true;
@@ -40,15 +40,15 @@ class TestScreen extends BasicScreen{
                           new Expanded(),
                           new SizedBox(
                             width = 70,
-                            child = new Padding(padding = 10, child = new Container(color = Color.valueOf("515151")))
+                            child = new Padding(padding = EdgeInsets.all(10), child = new Container(color = Color.valueOf("515151")))
                           ),
                           new SizedBox(
                             width = 70,
-                            child = new Padding(padding = 10, child = new Container(color = Color.valueOf("515151")))
+                            child = new Padding(padding = EdgeInsets.all(10), child = new Container(color = Color.valueOf("515151")))
                           ),
                           new SizedBox(
                             width = 70,
-                            child = new Padding(padding = 10, child = new Container(color = Color.valueOf("515151")))
+                            child = new Padding(padding = EdgeInsets.all(10), child = new Container(color = Color.valueOf("515151")))
                           )
                         )
                       )
@@ -83,7 +83,7 @@ class TestScreen extends BasicScreen{
                     child = new Align(
                       alignment = Alignment.centerLeft,
                       child = new Padding(
-                        padding = 20,
+                        padding = EdgeInsets.all(20),
 
                         child = new GestureDetector(
                           touchDown = (_, _, _, _) => true,
@@ -92,7 +92,7 @@ class TestScreen extends BasicScreen{
                             child = new SizedBox(
                               width = 400,
                               child = new Padding(
-                                padding = 20,
+                                padding = EdgeInsets.all(20),
                                 child = new Column(
                                   children = List(
                                     new SizedBox(height = 100),
@@ -151,7 +151,7 @@ class TestScreen extends BasicScreen{
                         child = new GestureDetector(child = new Container(
                           color = Color.WHITE,
                           child = new Padding(
-                            padding = 20,
+                            padding = EdgeInsets.all(10),
                             child = new Column(
                               children = List(
                                 new SizedBox(height = 20, width = 200, child = new Container(color = Color.DARK_GRAY)),
