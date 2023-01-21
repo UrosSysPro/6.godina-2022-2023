@@ -43,7 +43,7 @@ class TextWidgetTest extends BasicScreen{
                         backgroundWidth = 0.3f,
                         foregroundWidth = 0.3f,
                         min = 0.2f,
-                        max=2f,
+                        max=5f,
                         step = 0.01f,
                         backgroundColor = Color.DARK_GRAY,
                         foregroundColor = Color.SKY,
