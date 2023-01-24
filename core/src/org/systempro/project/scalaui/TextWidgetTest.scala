@@ -9,7 +9,7 @@ import org.systempro.project.scalaui.widgets._
 class TextWidgetTest extends BasicScreen{
 
   var scene:Scene=null;
-  val textFieldKey:Key=Key();
+  val textFieldKey:Key[TextField]=Key();
 
   override def show(): Unit = {
     Fonts.load();
@@ -50,10 +50,7 @@ class TextWidgetTest extends BasicScreen{
                         circleColor = Color.LIGHT_GRAY,
                         roundness=0.5f,
                         onChange = (value)=>{
-                          textFieldKey.widget match {
-                            case textField: TextField=>textField.scale=value
-                            case _=>;
-                          }
+                          textFieldKey.widget.scale=value;
                         }
                       )
                     ),

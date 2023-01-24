@@ -1,3 +1,3 @@
 package org.systempro.project.scalaui
 
-case class Key(var widget:Widget=null);
+case class Key[A](var widget:A=null);

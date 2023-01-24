@@ -24,8 +24,11 @@ abstract class Widget {
       point.x<position.x+size.width&&
       point.y<position.y+size.height
   };
-  def setKey(key:Key): Widget ={
-    key.widget=this;
+  def setKey[A](key:Key[A]): Widget ={
+    this match {
+      case a: A=>key.widget=a
+      case _=>{}
+    }
     this;
   }
 }

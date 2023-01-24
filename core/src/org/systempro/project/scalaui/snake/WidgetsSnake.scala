@@ -14,7 +14,7 @@ class WidgetsSnake extends BasicScreen{
   var scene:Scene=null;
   val width: Int = Gdx.graphics.getWidth/50;
   val height: Int = Gdx.graphics.getHeight/30;
-  val keys: Array[Array[Key]] =Array.ofDim[Key](width,height);
+  val keys: Array[Array[Key[Switch]]] =Array.ofDim[Key[Switch]](width,height);
   var parts:List[Point]=List();
   var direction:Point=Point(1,0);
   var timer:Float=0;
@@ -82,58 +82,55 @@ class WidgetsSnake extends BasicScreen{
     ScreenUtils.clear(0,0,0,1);
     timer+=delta*1000;
     if(timer>100){
-      //reset timer
       timer=0;
-      //vrati rep na sikljuceni switch
-      var x=parts.last.x;
-      var y=parts.last.y;
-      keys(x)(y).widget match {
-        case switch: Switch=>switch.setValue(false)
-        case _=>{}
-      }
-      //update parts od kraja ka pocetku
-      var i=parts.length-1;
-      while (i>=1){
-        parts(i).x=parts(i-1).x;
-        parts(i).y=parts(i-1).y;
-        i-=1;
-      }
-      //update prvi part
-      parts.head.x+=direction.x;
-      parts.head.y+=direction.y;
-      if(parts.head.x>width-1)parts.head.x=0;
-      if(parts.head.y>height-1)parts.head.y=0;
-      if(parts.head.x<0)parts.head.x=width-1;
-      if(parts.head.y<0)parts.head.y=height-1;
-      //upali se prvi switch
-      x=parts.head.x;
-      y=parts.head.y;
-      keys(x)(y).widget match {
-        case switch: Switch=>switch.setValue(true);
-        case _=>
-      }
-      //update food
-      keys(food.x)(food.y).widget match {
-        case switch: Switch=>{
-          switch.setValue(true);
-          switch.checkedColor=Color.FIREBRICK;
-        }
-      }
-      //proveri dal je pojeo
-      if(parts.head.x==food.x&&parts.head.y==food.y){
-        parts=parts :+ Point(width/2,height/2);
-        keys(food.x)(food.y).widget match {
-          case switch: Switch => {
-            switch.checkedColor = Color.LIME;
-          }
-        }
-        food.x=random.nextInt(width);
-        food.y=random.nextInt(height);
-      }
+      updateGame();
     }
 
     scene.animate(delta);
     scene.draw();
+  }
+
+  def updateGame(): Unit ={
+    //vrati rep na sikljuceni switch
+    var x = parts.last.x;
+    var y = parts.last.y;
+    keys(x)(y).widget.setValue(false);
+    //update parts od kraja ka pocetku
+    var i = parts.length - 1;
+    while (i >= 1) {
+      parts(i).x = parts(i - 1).x;
+      parts(i).y = parts(i - 1).y;
+      i -= 1;
+    }
+    //update prvi part
+    parts.head.x += direction.x;
+    parts.head.y += direction.y;
+    if (parts.head.x > width - 1) parts.head.x = 0;
+    if (parts.head.y > height - 1) parts.head.y = 0;
+    if (parts.head.x < 0) parts.head.x = width - 1;
+    if (parts.head.y < 0) parts.head.y = height - 1;
+    //upali se prvi switch
+    x = parts.head.x;
+    y = parts.head.y;
+    keys(x)(y).widget.setValue(true);
+    //update food
+    keys(food.x)(food.y).widget.setValue(true);
+    keys(food.x)(food.y).widget.checkedColor = Color.FIREBRICK;
+    //proveri dal je pojeo
+    if (parts.head.x == food.x && parts.head.y == food.y) {
+      parts = parts :+ Point(width / 2, height / 2);
+      keys(food.x)(food.y).widget.checkedColor = Color.LIME;
+      food.x = random.nextInt(width);
+      food.y = random.nextInt(height);
+    }
+    //proveri da li je game over
+    i=1;
+    while(i<parts.length){
+      if(parts.head.x==parts(i).x && parts.head.y==parts(i).y){
+        //game over
+      }
+      i+=1;
+    }
   }
 
   override def resize(width: Int, height: Int): Unit = {
