@@ -2,15 +2,13 @@ package org.systempro.project.camera;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
-import org.systempro.project.shaders.TextureRenderer;
+import org.systempro.project.renderers.TextureRenderer;
 
 import java.util.Random;
 
@@ -35,7 +33,7 @@ public class TestScreen extends BasicScreen {
         camera2d=new Camera2d();
         camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 //        camera2d.setScale(1,-1);
-        camera2d.setTranslation(-Gdx.graphics.getWidth()/2,-Gdx.graphics.getHeight()/2);
+        camera2d.setPosition(Gdx.graphics.getWidth()/2,Gdx.graphics.getHeight()/2);
         regions=TextureRegion.split(texture,16,16);
         renderer=new TextureRenderer();
         renderer.texture=texture;
@@ -68,9 +66,9 @@ public class TestScreen extends BasicScreen {
         if(Gdx.input.isKeyPressed(Input.Keys.Q))scale*=1.05;
         if(Gdx.input.isKeyPressed(Input.Keys.E))scale*=0.95;
 
-        camera2d.setTranslation(-x,-y);
+        camera2d.setPosition(x,y);
         camera2d.setScale(scale,-scale);
-        camera2d.setRotate(rotate);
+        camera2d.setRotation(rotate);
         camera2d.update();
         int size=16;
         for(int i=0;i<n;i++){
@@ -90,8 +88,8 @@ public class TestScreen extends BasicScreen {
 
     @Override
     public void resize(int width, int height) {
-        camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        camera2d.setTranslation(-Gdx.graphics.getWidth()/2,-Gdx.graphics.getHeight()/2);
+        camera2d.setSize(width,height);
+        camera2d.setPosition(width/2,height/2);
     }
 
     @Override

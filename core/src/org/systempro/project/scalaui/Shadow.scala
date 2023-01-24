@@ -2,7 +2,7 @@ package org.systempro.project.scalaui
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector2
-import org.systempro.project.ui.Size
+import org.systempro.project.renderers.WidgetRenderer
 
 class Shadow(
             var offset:Vector2=new Vector2(0,0),

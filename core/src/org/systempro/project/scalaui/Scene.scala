@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.utils.Disposable
 import org.systempro.project.camera.Camera2d
-import org.systempro.project.ui.Size
+import org.systempro.project.renderers.WidgetRenderer
 
 class Scene extends Disposable{
   var renderer:WidgetRenderer = null
@@ -17,12 +17,13 @@ class Scene extends Disposable{
     this();
     inputProcessor=new SceneInputProcessor(this);
     this.root = root;
-    renderer = new WidgetRenderer
-    camera2d = new Camera2d
-    val width = Gdx.graphics.getWidth
-    val height = Gdx.graphics.getHeight
-    resize(width, height)
-    renderer.camera2d = camera2d
+    renderer = new WidgetRenderer();
+    camera2d = new Camera2d();
+    camera2d.setScale(1,-1);
+    val width = Gdx.graphics.getWidth;
+    val height = Gdx.graphics.getHeight;
+    resize(width, height);
+    renderer.camera2d = camera2d;
 
     if(!Fonts.loaded){
       Fonts.load();
@@ -49,8 +50,7 @@ class Scene extends Disposable{
 
   def resize(width: Float, height: Float): Unit = {
     camera2d.setSize(width, height)
-    camera2d.setTranslation(-width / 2, -height / 2)
-    camera2d.setScale(1, -1)
+    camera2d.setPosition(width / 2, height / 2)
     camera2d.update()
   }
 

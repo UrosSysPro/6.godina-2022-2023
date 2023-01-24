@@ -1,4 +1,4 @@
-package org.systempro.project.scalaui;
+package org.systempro.project.renderers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
@@ -15,7 +15,7 @@ public class WidgetRenderer implements Disposable {
     private float[] vertices;
     public Texture font=null;
     //    public Texture texture;
-    public Camera2d camera2d;
+    public Camera2d camera2d=null;
     public WidgetRenderer(){
         maxRects=10000;
         rectsToDraw=0;

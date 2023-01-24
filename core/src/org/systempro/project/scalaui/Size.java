@@ -1,4 +1,4 @@
-package org.systempro.project.ui;
+package org.systempro.project.scalaui;
 
 public class Size {
     public float width,height;

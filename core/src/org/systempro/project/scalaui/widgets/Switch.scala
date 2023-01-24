@@ -1,7 +1,8 @@
 package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.graphics.Color
-import org.systempro.project.scalaui.{AnimationController, GestureDetector, WidgetRenderer}
+import org.systempro.project.renderers.WidgetRenderer
+import org.systempro.project.scalaui.{AnimationController, GestureDetector}
 
 class Switch(
               var value:Boolean=false,

@@ -1,8 +1,8 @@
 package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.math.Vector2
-import org.systempro.project.scalaui.{GestureDetector, Widget, WidgetRenderer}
-import org.systempro.project.ui.Size
+import org.systempro.project.renderers.WidgetRenderer
+import org.systempro.project.scalaui.{GestureDetector, Size, Widget}
 
 import scala.collection.mutable
 

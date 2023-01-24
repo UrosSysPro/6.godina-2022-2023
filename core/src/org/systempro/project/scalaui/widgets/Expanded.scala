@@ -1,7 +1,6 @@
 package org.systempro.project.scalaui.widgets
 
-import org.systempro.project.scalaui.{SingleChildWidget, Widget}
-import org.systempro.project.ui.Size
+import org.systempro.project.scalaui.{SingleChildWidget, Size, Widget}
 
 class Expanded(child:Widget=null,var flex:Float=1) extends SingleChildWidget(child:Widget) {
 

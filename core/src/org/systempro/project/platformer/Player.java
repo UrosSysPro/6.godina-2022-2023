@@ -2,8 +2,9 @@ package org.systempro.project.platformer;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.World;
+import org.systempro.project.physics2d.Collider;
 import org.systempro.project.physics2d.PlazmaBody;
 
 public class Player implements Collider {
@@ -27,11 +28,16 @@ public class Player implements Collider {
         hitbox.sensorRight.setUserData(this);
         hitbox.sensorLeft.setUserData(this);
     }
+
+    public Player(World world,float x,float y,float width,float height){
+        this(new PlazmaBody(world, x, y, width, height));
+    }
     public void update(float delta){
         Vector2 speed = hitbox.getVelocity();
         if (keyLeft) speed.x = -5;
         if (keyRight) speed.x = 5;
         if (keyUp && onGround) speed.y = 10;
+        if(speed.y<0)speed.y-=10*delta;
         if(wallJumbingRight&&speed.x>0)speed.x=0;
         if(wallJumbingLeft&&speed.x<0)speed.x=0;
         hitbox.setVelocity(speed);
@@ -48,11 +54,11 @@ public class Player implements Collider {
         }
         if(fix1== hitbox.sensorLeft&& fix2.getUserData() instanceof Platform){
             wallJumbingLeft=true;
-            System.out.println("wall jump left");
+            System.out.println("wall jump start");
         }
         if(fix1== hitbox.sensorRight&& fix2.getUserData() instanceof Platform){
             wallJumbingRight=true;
-            System.out.println("wall jump right");
+            System.out.println("wall jump start");
         }
     }
 
@@ -64,11 +70,11 @@ public class Player implements Collider {
         }
         if(fix1== hitbox.sensorLeft&& fix2.getUserData() instanceof Platform){
             wallJumbingLeft=false;
-            System.out.println("wall jump left");
+            System.out.println("wall jump end");
         }
         if(fix1== hitbox.sensorRight&& fix2.getUserData() instanceof Platform){
             wallJumbingRight=false;
-            System.out.println("wall jump right");
+            System.out.println("wall jump end");
         }
     }
 }

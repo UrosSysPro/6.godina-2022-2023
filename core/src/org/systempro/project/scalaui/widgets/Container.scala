@@ -1,7 +1,8 @@
 package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.graphics.Color
-import org.systempro.project.scalaui.{Shadow, SingleChildWidget, Widget, WidgetRenderer}
+import org.systempro.project.renderers.WidgetRenderer
+import org.systempro.project.scalaui.{Shadow, SingleChildWidget, Widget}
 
 class Container(
                  child:Widget=null,

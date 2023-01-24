@@ -1,8 +1,7 @@
 package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.math.Vector2
-import org.systempro.project.scalaui.{MultiChildWidget, Widget}
-import org.systempro.project.ui.Size
+import org.systempro.project.scalaui.{MultiChildWidget, Size, Widget}
 
 class Row(children:List[Widget]=null)extends MultiChildWidget (children:List[Widget]){
 

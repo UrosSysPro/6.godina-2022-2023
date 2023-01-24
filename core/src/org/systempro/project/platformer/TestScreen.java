@@ -15,6 +15,7 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.camera.Camera2d;
+import org.systempro.project.physics2d.CollisionListener;
 import org.systempro.project.physics2d.PlazmaBody;
 import org.systempro.project.physics2d.RectBody;
 
@@ -22,25 +23,18 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class TestScreen extends BasicScreen {
-    TiledMap map;
-    TiledMapRenderer mapRenderer;
-    Camera2d camera2d;
-    ShapeRenderer shapeRenderer;
+    public TiledMap map;
+    public TiledMapRenderer mapRenderer;
+    public Camera2d camera2d;
+    public ShapeRenderer shapeRenderer;
 
-    World world;
-    ArrayList<Platform> walls;
+    public World world;
+    public ArrayList<Platform> walls;
     public Player player;
 
-    @Override
-    public void show() {
-        shapeRenderer=new ShapeRenderer();
+    public void loadMap(String mapFileName){
 
-        camera2d=new Camera2d();
-        camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        camera2d.setScale(1,1);
-        camera2d.position.set(0,0,0);
-        map=new TmxMapLoader().load("platformerMap.tmx");
-
+        map=new TmxMapLoader().load(mapFileName);
         world=new World(new Vector2(0,-10),false);
         walls=new ArrayList<>();
 
@@ -50,22 +44,32 @@ public class TestScreen extends BasicScreen {
             if(Objects.equals(object.getName(), "spawn")){
                 float x= (float) object.getProperties().get("x");
                 float y= (float) object.getProperties().get("y");
-                PlazmaBody hitbox=new PlazmaBody(world,x,y,50,100);
-                player=new Player(hitbox);
+                player=new Player(world,x,y,25,50);
             }else{
                 float x= (float) object.getProperties().get("x");
                 float y= (float) object.getProperties().get("y");
                 float w= (float) object.getProperties().get("width");
                 float h= (float) object.getProperties().get("height");
-                RectBody hitbox=new RectBody(world,x+w/2,y+h/2,w,h);
-                hitbox.setType(BodyDef.BodyType.StaticBody);
-                walls.add(new Platform(hitbox));
+                walls.add(new Platform(world,x+w/2,y+h/2,w,h));
             }
         }
 
         mapRenderer=new OrthogonalTiledMapRenderer(map);
 
         world.setContactListener(new CollisionListener());
+    }
+
+    @Override
+    public void show() {
+        shapeRenderer=new ShapeRenderer();
+
+        camera2d=new Camera2d();
+        camera2d.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        camera2d.setScale(1,1);
+        camera2d.setPosition(0,0);
+
+        loadMap("platformer/platformerMap.tmx");
+
         Gdx.input.setInputProcessor(new GameInputProcessor(this));
     }
 
@@ -73,20 +77,22 @@ public class TestScreen extends BasicScreen {
     public void render(float delta) {
         ScreenUtils.clear(0,0,0,1);
 
+        //update
         player.update(delta);
-
         world.step(delta,10,10);
 
+        //update camera
         float x=player.hitbox.getPosition().x;
         float y=player.hitbox.getPosition().y;
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();
-        camera2d.setTranslation(-x,-y);
+        camera2d.setPosition(x,y);
         camera2d.update();
+        shapeRenderer.setProjectionMatrix(camera2d.combined4);
         mapRenderer.setView(camera2d.combined4,x-width/2,y-height/2,width,height);
 
+        //render
         mapRenderer.render();
-        shapeRenderer.setProjectionMatrix(camera2d.combined4);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         player.draw(shapeRenderer);
         shapeRenderer.end();
@@ -104,6 +110,9 @@ public class TestScreen extends BasicScreen {
 
     @Override
     public void dispose() {
+        map.dispose();
+        shapeRenderer.dispose();
+        world.dispose();
     }
 
     @Override

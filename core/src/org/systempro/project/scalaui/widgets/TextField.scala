@@ -2,8 +2,8 @@ package org.systempro.project.scalaui.widgets
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import org.systempro.project.scalaui.{EdgeInsets, GestureDetector, WidgetRenderer}
-import org.systempro.project.ui.Size
+import org.systempro.project.renderers.WidgetRenderer
+import org.systempro.project.scalaui.{EdgeInsets, GestureDetector, Size}
 
 class TextField(
                var lines:Int=1,

@@ -54,7 +54,7 @@ public class TestScreen extends BasicScreen {
         camera2d=new Camera2d();
         camera2d.setScale(1,-1);
         camera2d.setSize(width,height);
-        camera2d.setTranslation(-width/2,-height/2);
+        camera2d.setPosition(width/2,height/2);
         camera2d.update();
     }
 
@@ -84,7 +84,7 @@ public class TestScreen extends BasicScreen {
             width,height
         });
         camera2d.setSize(width,height);
-        camera2d.setTranslation(-width/2,-height/2);
+        camera2d.setPosition(width/2,height/2);
         camera2d.update();
         scene.resize(width,height);
     }

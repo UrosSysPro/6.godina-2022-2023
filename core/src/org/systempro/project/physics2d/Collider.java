@@ -1,4 +1,4 @@
-package org.systempro.project.platformer;
+package org.systempro.project.physics2d;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
 

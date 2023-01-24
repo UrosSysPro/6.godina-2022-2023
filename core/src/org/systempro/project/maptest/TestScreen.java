@@ -2,9 +2,7 @@ package org.systempro.project.maptest;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -19,14 +17,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.bullet.collision.btSimulationIslandManager;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.camera.Camera2d;
 import org.systempro.project.physics2d.RectBody;
-import org.systempro.project.shaders.TextureRenderer;
+import org.systempro.project.renderers.TextureRenderer;
 
-import javax.swing.text.TabExpander;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -56,10 +52,10 @@ public class TestScreen extends BasicScreen {
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();
         camera=new Camera2d();
-        camera.setTranslation(0,0);
+        camera.setPosition(0,0);
         camera.setScale(1,1);
         camera.setSize(width,height);
-        camera.setRotate(0);
+        camera.setRotation(0);
         mapa=new TmxMapLoader().load("mapa.tmx");
         mapRenderer=new OrthoCachedTiledMapRenderer(mapa);
 
@@ -102,15 +98,17 @@ public class TestScreen extends BasicScreen {
         world.step(delta,10,10);
 
         Vector2 pos=player.getPosition();
-        camera.setTranslation(-pos.x, -pos.y);
+        camera.setPosition(pos.x, pos.y);
         camera.setScale(scale,scale);
         camera.update();
         mapRenderer.setView(
             camera.combined4,
-            -camera.position.x,
-            -camera.position.y,
-            1f/camera.size.x,
-            1f/camera.size.y
+            player.getPosition().x,
+            player.getPosition().y,
+            1f/Gdx.graphics.getWidth(),
+            1f/Gdx.graphics.getHeight()
+//            Gdx.graphics.getWidth(),
+//            Gdx.graphics.getHeight()
         );
         Gdx.gl20.glEnable(GL20.GL_BLEND);
         Gdx.gl20.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
