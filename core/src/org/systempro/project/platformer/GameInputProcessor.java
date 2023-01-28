@@ -4,8 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class GameInputProcessor implements InputProcessor {
-    float r=0;
-    float s=1;
+
     TestScreen game;
     public GameInputProcessor(TestScreen game){
         this.game=game;
@@ -55,13 +54,7 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean keyTyped(char character) {
-        if(character=='e'){
-            s*=1.1;
-        }
-        if(character=='q'){
-            s*=0.9;
-        }
-        game.camera2d.setScale(s,s);
+
         return true;
     }
 
@@ -87,8 +80,7 @@ public class GameInputProcessor implements InputProcessor {
 
     @Override
     public boolean scrolled(float amountX, float amountY) {
-        r+=amountY/5;
-        game.camera2d.setRotationRad(r);
+
         return true;
     }
 }

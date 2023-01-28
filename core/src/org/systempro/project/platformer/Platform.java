@@ -11,6 +11,7 @@ public class Platform {
 
     public Platform(RectBody hitbox){
         this.hitbox=hitbox;
+        hitbox.getFixture().setRestitution(0);
         hitbox.setType(BodyDef.BodyType.StaticBody);
         hitbox.getFixture().setUserData(this);
     }

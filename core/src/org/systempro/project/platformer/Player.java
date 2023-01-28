@@ -13,6 +13,9 @@ public class Player implements Collider {
 
 
     public Player(PlazmaBody hitbox){
+        for(Fixture fixture:hitbox.body.getFixtureList()){
+            fixture.setRestitution(0);
+        }
         this.hitbox=hitbox;
         keyDown=false;
         keyRight=false;
@@ -34,9 +37,10 @@ public class Player implements Collider {
     }
     public void update(float delta){
         Vector2 speed = hitbox.getVelocity();
-        if (keyLeft) speed.x = -5;
-        if (keyRight) speed.x = 5;
-        if (keyUp && onGround) speed.y = 10;
+        if (keyLeft) speed.x = -4;
+        if (keyRight) speed.x = 4;
+        if(onGround)speed.x-=speed.x*0.1;
+        if (keyUp && onGround) speed.y = 6;
         if(speed.y<0)speed.y-=10*delta;
         if(wallJumbingRight&&speed.x>0)speed.x=0;
         if(wallJumbingLeft&&speed.x<0)speed.x=0;

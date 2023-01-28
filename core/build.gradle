@@ -1,9 +1,7 @@
-
-apply plugin: "scala"
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.scala.srcDirs = [  "src"]
+sourceSets.main.scala.srcDirs = ["src"]
 sourceSets.main.java.srcDirs = [  ]
 
 eclipse.project.name = appName + "-core"
