@@ -1,5 +1,8 @@
+#version 330
+
 varying vec2 v_pos;
 uniform vec2 mouse;
+uniform float rayIterations;
 
 vec2 translate(vec2 p,vec2 t){
     return p-t;
@@ -31,12 +34,7 @@ float sceneSdf(vec2 p){
     p2=translate(p2,vec2(600.0,200.0));
     float d2=rectSdf(p2,vec2(50.0,200.0));
 
-//    vec2 p3=p;
-//    p3=translate(p3,mouse);
-//    float d3=circleSdf(p3,20.0);
-
     float d=min(d1,d2);
-//    d=min(d,d3);
 
     return d;
 }
@@ -45,10 +43,10 @@ float rayMarch(vec2 p,vec2 lightPos){
     vec2 rd=normalize(lightPos-ro);
     float d=0.0;
 
-    for(int i=0;i<100;i++){
+    for(float i=0.0;i<rayIterations;i++){
         p=ro+rd*d;
-        float currentD=max(0.0,sceneSdf(p));
-        float step=min(currentD,length(p-lightPos));
+        float currentD=sceneSdf(p);
+        float step=min(currentD,length(p-lightPos))-0.5;
         d+=step;
     }
     return d;
@@ -56,10 +54,14 @@ float rayMarch(vec2 p,vec2 lightPos){
 
 void main(){
     float d=sceneSdf(v_pos);
-    float lightDistance=rayMarch(v_pos,mouse);
+    float maxRayDistance=rayMarch(v_pos,mouse);
+    float ligntDistance=length(mouse-v_pos);
 
-    float alpha=length(mouse-v_pos)-lightDistance;
-    alpha=float(alpha<0.1);
+    float delta=abs(ligntDistance-maxRayDistance);
+    delta=float(delta<1.0);
 
-    gl_FragColor=mix(vec4(0.0),vec4(1.0),alpha);
+    float intensity=1.0-smoothstep(0.0,1000.0,ligntDistance);
+
+    vec4 shadow=mix(vec4(0.0),vec4(1.0),delta)*intensity;
+    gl_FragColor=mix(shadow,vec4(1.0),float(d<0.0));
 }

@@ -11,8 +11,8 @@ import org.systempro.project.camera.Camera2d;
 
 public class SdfShadow2d {
 
-    private Mesh mesh;
-    private ShaderProgram shader;
+    private final Mesh mesh;
+    private final ShaderProgram shader;
     public Camera2d camera2d;
 
     public SdfShadow2d(){
@@ -48,10 +48,22 @@ public class SdfShadow2d {
         camera2d.update();
     }
 
-    public void render(){
+    public void render(int rayIterations){
         shader.bind();
         shader.setUniformMatrix("camera",camera2d.combined4);
         shader.setUniformf("mouse",new Vector2(Gdx.input.getX(),Gdx.input.getY()));
+        shader.setUniformf("rayIterations",rayIterations);
         mesh.render(shader, GL20.GL_TRIANGLES);
+    }
+    public void resize(int width,int height){
+        camera2d.setSize(width,height);
+        camera2d.setPosition(width/2,height/2);
+        camera2d.update();
+        mesh.setVertices(new float[]{
+            0,     0,
+            0,height,
+            width,     0,
+            width,height
+        });
     }
 }
