@@ -46,16 +46,18 @@ float rayMarch(vec2 p,vec2 lightPos){
     for(float i=0.0;i<rayIterations;i++){
         p=ro+rd*d;
         float currentD=sceneSdf(p);
-        float step=min(currentD,length(p-lightPos))-0.5;
+        float step=min(currentD,length(p-lightPos)-0.5);
         d+=step;
     }
     return d;
 }
 
 void main(){
-    float d=sceneSdf(v_pos);
-    float maxRayDistance=rayMarch(v_pos,mouse);
-    float ligntDistance=length(mouse-v_pos);
+    vec2 p=v_pos;
+
+    float d=sceneSdf(p);
+    float maxRayDistance=rayMarch(p,mouse);
+    float ligntDistance=length(mouse-p);
 
     float delta=abs(ligntDistance-maxRayDistance);
     delta=float(delta<1.0);

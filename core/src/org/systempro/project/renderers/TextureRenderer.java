@@ -13,9 +13,12 @@ public class TextureRenderer implements Disposable {
     private ShaderProgram shader;
     private float[] vertices;
     public Texture texture;
+    public boolean ownsTexture;
     public Camera2d camera2d;
-    public TextureRenderer(){
-
+    public TextureRenderer(Camera2d camera2d,Texture texture,boolean ownsTexture){
+        this.camera2d=camera2d;
+        this.texture=texture;
+        this.ownsTexture=ownsTexture;
         maxRects=10000;
         rectsToDraw=0;
         vertexSize=4;
@@ -40,6 +43,16 @@ public class TextureRenderer implements Disposable {
         String fragment= Gdx.files.internal("textureRenderer/fragment.glsl").readString();
         shader=new ShaderProgram(vertex,fragment);
         System.out.println("Shader log:"+shader.getLog());
+    }
+    public TextureRenderer(){
+        this(null,null,true);
+        texture=new Texture(Gdx.files.internal("badlogic.jpg"));
+        camera2d=new Camera2d();
+        float width=Gdx.graphics.getWidth();
+        float height=Gdx.graphics.getHeight();
+        camera2d.setSize(width,height);
+        camera2d.setPosition(width/2,height/2);
+        camera2d.update();
     }
     public void draw(TextureRegion region,float x,float y,float width,float height){
         if(rectsToDraw>=maxRects)flush();
@@ -70,6 +83,7 @@ public class TextureRenderer implements Disposable {
 
     @Override
     public void dispose() {
+        if(ownsTexture)texture.dispose();
         shader.dispose();
         mesh.dispose();
     }

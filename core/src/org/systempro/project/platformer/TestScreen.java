@@ -2,6 +2,8 @@ package org.systempro.project.platformer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -24,6 +26,7 @@ import org.systempro.project.camera.Camera2d;
 import org.systempro.project.physics2d.CollisionListener;
 import org.systempro.project.physics2d.PlazmaBody;
 import org.systempro.project.physics2d.RectBody;
+import org.systempro.project.renderers.InvertFilter;
 
 import java.util.ArrayList;
 import java.util.Objects;

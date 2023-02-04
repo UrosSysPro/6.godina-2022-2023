@@ -16,7 +16,9 @@ public class WidgetRenderer implements Disposable {
     public Texture font=null;
     //    public Texture texture;
     public Camera2d camera2d=null;
-    public WidgetRenderer(){
+    public WidgetRenderer(Camera2d camera2d,Texture font){
+        this.camera2d=camera2d;
+        this.font=font;
         maxRects=10000;
         rectsToDraw=0;
         vertexSize=18;
@@ -50,6 +52,17 @@ public class WidgetRenderer implements Disposable {
         shader=new ShaderProgram(vertex,fragment);
         if(!shader.isCompiled())
             System.out.println("Shader log:"+shader.getLog());
+    }
+
+    public WidgetRenderer(){
+        this(null,null);
+        font=new Texture("badlogic.jpg");
+        camera2d=new Camera2d();
+        float width=Gdx.graphics.getWidth();
+        float height=Gdx.graphics.getHeight();
+        camera2d.setSize(width,height);
+        camera2d.setPosition(width/2,height/2);
+        camera2d.update();
     }
     public void rect(float x, float y, float width, float height, Color color){
         rect(x,y,width,height,color,Color.CLEAR,0,0,0);
