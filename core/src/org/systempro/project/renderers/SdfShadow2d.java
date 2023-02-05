@@ -1,34 +1,35 @@
 package org.systempro.project.renderers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 import org.systempro.project.camera.Camera2d;
 
-public class SdfShadow2d {
+public class SdfShadow2d implements Disposable {
 
     private final Mesh mesh;
     private final ShaderProgram shader;
     public Camera2d camera2d;
-    public int pixelSize;
+    public Texture texture;
+    public TextureRegion region;
+    public FrameBuffer buffer;
+    public float bufferWidth,bufferHeight;
+    public float renderWidth, renderHeight;
+    public float worldWidth,worldHeight;
 
-    public SdfShadow2d(int pixelSize){
-        this.pixelSize=pixelSize;
+
+    public SdfShadow2d(float worldWidth,float worldHeight,float renderWidth,float renderHeight){
+
         mesh=new Mesh(true,4,6,
             new VertexAttribute(VertexAttributes.Usage.Position,2,"pos")
         );
-        float width= Gdx.graphics.getWidth();
-        float height=Gdx.graphics.getHeight();
-        mesh.setVertices(new float[]{
-                          0,               0,
-                          0,height/pixelSize,
-            width/pixelSize,               0,
-            width/pixelSize,height/pixelSize
-        });
+        bufferWidth=1920;
+        bufferHeight=1080;
+
         mesh.setIndices(new short[]{
             0,1,2,
             1,3,2
@@ -45,27 +46,47 @@ public class SdfShadow2d {
 
         camera2d=new Camera2d();
         camera2d.setScale(1,-1);
-        camera2d.setSize(width,height);
-        camera2d.setPosition(width/2,height/2);
+        camera2d.setSize(bufferWidth,bufferHeight);
+        camera2d.setPosition(bufferWidth/2,bufferHeight/2);
         camera2d.update();
+
+        buffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) bufferWidth, (int) bufferHeight,false,false);
+        texture=buffer.getColorBufferTexture();
+        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+        region=new TextureRegion(texture);
+
+        resize(worldWidth,worldHeight,renderWidth,renderHeight);
     }
 
     public void render(int rayIterations){
+        buffer.begin();
         shader.bind();
         shader.setUniformMatrix("camera",camera2d.combined4);
         shader.setUniformf("mouse",new Vector2(Gdx.input.getX(),Gdx.input.getY()));
         shader.setUniformf("rayIterations",rayIterations);
+        shader.setUniformf("worldSize",new Vector2(worldWidth,worldHeight));
+        shader.setUniformf("renderSize",new Vector2(renderWidth, renderHeight));
         mesh.render(shader, GL20.GL_TRIANGLES);
+        buffer.end();
     }
-    public void resize(int width,int height){
-        camera2d.setSize(width,height);
-        camera2d.setPosition(width/2,height/2);
-        camera2d.update();
+    public void resize(float worldWidth,float worldHeight,float renderWidth,float renderHeight){
+        this.worldWidth=worldWidth;
+        this.worldHeight=worldHeight;
+        this.renderWidth=renderWidth;
+        this.renderHeight =renderHeight;
+        region.setRegion(0,0,renderWidth,renderHeight);
         mesh.setVertices(new float[]{
             0,     0,
-            0,height,
-            width,     0,
-            width,height
+            0,renderHeight,
+            renderWidth,     0,
+            renderWidth,renderHeight
         });
+    }
+
+    @Override
+    public void dispose() {
+        mesh.dispose();
+        shader.dispose();
+        buffer.dispose();
     }
 }

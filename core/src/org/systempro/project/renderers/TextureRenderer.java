@@ -44,6 +44,16 @@ public class TextureRenderer implements Disposable {
         shader=new ShaderProgram(vertex,fragment);
         System.out.println("Shader log:"+shader.getLog());
     }
+
+    public TextureRenderer(Texture texture){
+        this(null,texture,false);
+        camera2d=new Camera2d();
+        float width=Gdx.graphics.getWidth();
+        float height=Gdx.graphics.getHeight();
+        camera2d.setSize(width,height);
+        camera2d.setPosition(width/2,height/2);
+        camera2d.update();
+    }
     public TextureRenderer(){
         this(null,null,true);
         texture=new Texture(Gdx.files.internal("badlogic.jpg"));

@@ -1,9 +1,7 @@
 package org.systempro.project;
 
 import com.badlogic.gdx.Game;
-import org.systempro.project.platformer.TestScreen;
-import org.systempro.project.renderers.ShadowTest;
-import org.systempro.project.scalaui.snake.WidgetsSnake;
+import org.systempro.project.test3d.TestScreen;
 
 public class Main extends Game {
 
