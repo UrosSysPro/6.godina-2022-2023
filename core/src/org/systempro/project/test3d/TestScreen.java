@@ -15,6 +15,7 @@ public class TestScreen extends BasicScreen {
     ShaderProgram shader;
     Mesh mesh;
     Camera camera;
+    CameraController controller;
 
     @Override
     public void show() {
@@ -33,19 +34,29 @@ public class TestScreen extends BasicScreen {
         camera=new PerspectiveCamera(70,width,height);
         camera.near=0.1f;
         camera.far=100;
-        camera.position.set(2,2,2);
+        camera.position.set(1,0,1);
         camera.lookAt(0,0,0);
+        camera.update();
+        controller=new CameraController(camera);
     }
 
     @Override
     public void render(float delta) {
+        controller.update();
 
         Gdx.gl20.glClearColor(0,0,0,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl20.glViewport(0,0,800,600);
+        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+
         shader.bind();
         shader.setUniformMatrix("view",camera.view);
         shader.setUniformMatrix("projection",camera.projection);
-        mesh.render(shader,GL20.GL_LINES);
+        mesh.render(shader,GL20.GL_TRIANGLES);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        camera.viewportWidth=width;
+        camera.viewportHeight=height;
     }
 }

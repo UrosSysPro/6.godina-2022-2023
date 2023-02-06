@@ -5,6 +5,6 @@ uniform vec2 renderSize;
 uniform vec2 worldSize;
 
 void main(){
-    v_pos=pos/renderSize*worldSize;
+    v_pos=pos*worldSize/renderSize;
     gl_Position=camera*vec4(pos,0.0,1.0);
 }

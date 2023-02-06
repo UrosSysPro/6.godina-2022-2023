@@ -1,4 +1,4 @@
-#version 330
+//precision highp float;
 
 varying vec2 v_pos;
 uniform vec2 mouse;
