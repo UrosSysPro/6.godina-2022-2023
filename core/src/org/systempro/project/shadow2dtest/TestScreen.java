@@ -21,6 +21,7 @@ public class TestScreen extends BasicScreen {
         renderer=new TextureRenderer(shadow.texture);
         renderer.camera2d.setScale(1,1);
         resize((int) widht, (int) height);
+        System.out.println(Gdx.graphics.getGLVersion().getDebugVersionString());
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
+import com.badlogic.gdx.graphics.glutils.GLFrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
@@ -50,7 +51,9 @@ public class SdfShadow2d implements Disposable {
         camera2d.setPosition(bufferWidth/2,bufferHeight/2);
         camera2d.update();
 
-        buffer = new FrameBuffer(Pixmap.Format.RGBA8888, (int) bufferWidth, (int) bufferHeight,false,false);
+        GLFrameBuffer.FrameBufferBuilder builder=new GLFrameBuffer.FrameBufferBuilder((int)bufferWidth,(int)bufferHeight);
+        builder.addBasicColorTextureAttachment(Pixmap.Format.RGBA8888);
+        buffer=builder.build();
         texture=buffer.getColorBufferTexture();
         texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         region=new TextureRegion(texture);
