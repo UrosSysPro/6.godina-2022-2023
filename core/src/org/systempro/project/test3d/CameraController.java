@@ -40,14 +40,14 @@ public class CameraController  {
         rightDir.set(x,0,z);
     }
     public void update(){
-//        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-        float dx=Gdx.input.getDeltaX();
-        float dy=-Gdx.input.getDeltaY();
-        float sensitivity=1f/Math.max(camera.viewportHeight,camera.viewportWidth);
-        horizontalAngle-=dx*sensitivity*Math.PI;
-        verticalAngle  -=dy*sensitivity*Math.PI;
-        setDirection(horizontalAngle,verticalAngle);
-//        }
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            float dx = Gdx.input.getDeltaX();
+            float dy = -Gdx.input.getDeltaY();
+            float sensitivity = 1f / Math.max(camera.viewportHeight, camera.viewportWidth);
+            horizontalAngle -= dx * sensitivity * Math.PI;
+            verticalAngle -= dy * sensitivity * Math.PI;
+            setDirection(horizontalAngle, verticalAngle);
+        }
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))camera.position.y -= speed;
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE))     camera.position.y += speed;
         if(Gdx.input.isKeyPressed(Input.Keys.W))camera.position.add( forwardDir.x*speed,0, forwardDir.z*speed);
