@@ -25,9 +25,9 @@ void main(){
     //specular
     float specularStrenght=0.5;
     vec3 reflected=reflect(-lightDir,normal);
-    vec3 cameraDir=cameraPosition-v_position;
+    vec3 cameraDir=normalize(cameraPosition-v_position);
     vec4 specular=pow(max(dot(reflected,cameraDir),0.0),32.0)*pointLightColor*specularStrenght;
 
-//    gl_FragColor=(ambient+diffuse+specular)*baseColor;
-    gl_FragColor=vec4(v_normal,1.0);
+    gl_FragColor=(ambient+diffuse+specular)*baseColor;
+//    gl_FragColor=vec4(v_normal,1.0);
 }
