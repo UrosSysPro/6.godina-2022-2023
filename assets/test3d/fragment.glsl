@@ -19,14 +19,15 @@ void main(){
     vec4 ambient=vec4(0.2,0.3,0.2,1.0);
 
     //diffuse
+    float diffuseStrenth=0.7;
     vec3 lightDir=normalize(pointLightPosition-v_position);
-    vec4 diffuse=max(dot(lightDir,normal),0.0)*pointLightColor;
+    vec4 diffuse=max(dot(lightDir,normal),0.0)*pointLightColor*diffuseStrenth;
 
     //specular
-    float specularStrenght=0.5;
+    float specularStrenght=0.3;
     vec3 reflected=reflect(-lightDir,normal);
     vec3 cameraDir=normalize(cameraPosition-v_position);
-    vec4 specular=pow(max(dot(reflected,cameraDir),0.0),32.0)*pointLightColor*specularStrenght;
+    vec4 specular=pow(max(dot(reflected,cameraDir),0.0),128.0)*pointLightColor*specularStrenght;
 
     gl_FragColor=(ambient+diffuse+specular)*baseColor;
 //    gl_FragColor=vec4(v_normal,1.0);

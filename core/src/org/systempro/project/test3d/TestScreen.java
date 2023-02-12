@@ -18,6 +18,12 @@ public class TestScreen extends BasicScreen {
     Texture texture;
     CameraController controller;
 
+    InstanceRenderer renderer;
+
+    MeshInstance[][] instances;
+
+    public int n=10;
+
     @Override
     public void show() {
         texture=new Texture("test3d/texture.png");
@@ -41,6 +47,16 @@ public class TestScreen extends BasicScreen {
         camera.lookAt(0,0,0);
         camera.update();
         controller=new CameraController(camera);
+
+        renderer=new InstanceRenderer(mesh,shader,camera,texture);
+        instances=new MeshInstance[n][n];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                instances[i][j]=new MeshInstance();
+                instances[i][j].position.set(i*1.1f,0,j*1.1f);
+                instances[i][j].update();
+            }
+        }
     }
 
     @Override
@@ -53,13 +69,12 @@ public class TestScreen extends BasicScreen {
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 
-        shader.bind();
-        texture.bind(0);
-        shader.setUniformi("texture0",0);
-        shader.setUniformMatrix("view",camera.view);
-        shader.setUniformMatrix("projection",camera.projection);
-        shader.setUniformf("cameraPosition",camera.position);
-        mesh.render(shader,GL20.GL_TRIANGLES);
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+               renderer.draw(instances[i][j]);
+            }
+        }
+        renderer.flush();
     }
 
     @Override
