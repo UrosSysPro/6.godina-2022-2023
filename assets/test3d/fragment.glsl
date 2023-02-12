@@ -7,7 +7,7 @@ uniform vec3 cameraPosition;
 
 
 vec4 pointLightColor=vec4(1.0);
-vec3 pointLightPosition=vec3(2.0,2.0,2.0);
+vec3 pointLightPosition=vec3(10.0);
 
 void main(){
     vec2 texCoord=v_texCoord0;

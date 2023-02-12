@@ -1,6 +1,7 @@
 package org.systempro.project.test3d;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
@@ -20,9 +21,9 @@ public class TestScreen extends BasicScreen {
 
     InstanceRenderer renderer;
 
-    MeshInstance[][] instances;
+    MeshInstance[][][] instances;
 
-    public int n=10;
+    public int n=27;
 
     @Override
     public void show() {
@@ -49,18 +50,43 @@ public class TestScreen extends BasicScreen {
         controller=new CameraController(camera);
 
         renderer=new InstanceRenderer(mesh,shader,camera,texture);
-        instances=new MeshInstance[n][n];
+        instances=new MeshInstance[n][n][n];
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
-                instances[i][j]=new MeshInstance();
-                instances[i][j].position.set(i*1.1f,0,j*1.1f);
-                instances[i][j].update();
+                for(int k=0;k<n;k++){
+                    float scale=1;
+                    int stepen=n;
+                    while(stepen>0){
+                        int tacnih=0;
+                        if((i / stepen)%3 == 1)tacnih++;
+                        if((j / stepen)%3 == 1)tacnih++;
+                        if((k / stepen)%3 == 1)tacnih++;
+                        if(tacnih>=2){
+                            scale = 0;
+                            break;
+                        }
+                        stepen/=3;
+                    }
+                    MeshInstance instance=new MeshInstance();
+                    instance.position.set(i,j,k);
+                    instance.scale.set(scale,scale,scale);
+                    instance.update();
+                    instances[i][j][k]=instance;
+                }
             }
         }
     }
 
     @Override
     public void render(float delta) {
+        if(Gdx.input.isKeyPressed(Input.Keys.E)){
+            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
+            camera1.fieldOfView+=0.5;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.Q)){
+            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
+            camera1.fieldOfView-=0.5;
+        }
         controller.update();
 
         Gdx.gl20.glClearColor(0,0,0,1);
@@ -71,7 +97,9 @@ public class TestScreen extends BasicScreen {
 
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
-               renderer.draw(instances[i][j]);
+                for(int k=0;k<n;k++){
+                    renderer.draw(instances[i][j][k]);
+                }
             }
         }
         renderer.flush();

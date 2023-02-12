@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 public class CameraController  {
     float verticalAngle=0,horizontalAngle=0;
     Vector3 forwardDir,rightDir;
-    float speed=0.02f;
+    float speed=0.04f;
 
     Camera camera;
     public CameraController(Camera camera){
