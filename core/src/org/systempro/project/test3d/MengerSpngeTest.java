@@ -5,33 +5,27 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
-import com.badlogic.gdx.graphics.g3d.model.Node;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.BasicScreen;
+import org.systempro.project.basics3d.*;
 
-import java.lang.reflect.Array;
-
-public class TestScreen extends BasicScreen {
+public class MengerSpngeTest extends BasicScreen {
     ShaderProgram shader;
     Mesh mesh;
     Camera camera;
     Texture texture;
     CameraController controller;
+    Environment environment;
 
     InstanceRenderer renderer;
 
     MeshInstance[][][] instances;
 
-    public int n=27;
+    float time=0;
 
-    @Override
-    public void show() {
-        texture=new Texture("test3d/texture.png");
 
-        Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
-        mesh = model.meshes.first();
-
+    public void shaderSetup(){
         ShaderProgram.pedantic=false;
         String vertex=Gdx.files.internal("test3d/vertex.glsl").readString();
         String fragment=Gdx.files.internal("test3d/fragment.glsl").readString();
@@ -39,17 +33,19 @@ public class TestScreen extends BasicScreen {
         if(!shader.isCompiled()){
             System.out.println(shader.getLog());
         }
+    }
+    public void cameraSetup(){
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();
         camera=new PerspectiveCamera(70,width,height);
         camera.near=0.1f;
-        camera.far=100;
+        camera.far=50;
         camera.position.set(1,0,1);
         camera.lookAt(0,0,0);
         camera.update();
         controller=new CameraController(camera);
-
-        renderer=new InstanceRenderer(mesh,shader,camera,texture);
+    }
+    public void cubeSetup(int n){
         instances=new MeshInstance[n][n][n];
         for(int i=0;i<n;i++){
             for(int j=0;j<n;j++){
@@ -76,6 +72,49 @@ public class TestScreen extends BasicScreen {
             }
         }
     }
+    public void environmentSetup(){
+        environment=new Environment();
+//        environment.ambientColor.set(1,1,1,1);
+        for(int i=0;i<2;i++){
+            for(int j=0;j<2;j++){
+                for(int k=0;k<2;k++){
+                    float x=i==0?-2:11;
+                    float y=j==0?-2:11;
+                    float z=k==0?-2:11;
+                    environment.add(new Light(
+                        0,
+                        new Vector3(x,y,z),
+                        new Vector3(0,0,1),
+                        new Vector3(0,0,0),
+                        new Color(0.1f,0.1f,0.1f,1.0f)
+                    ));
+                }
+            }
+        }
+    }
+    @Override
+    public void show() {
+
+        MengerSpongeUI.init();
+        //material
+        texture=new Texture("test3d/texture.png");
+
+        //mesh
+        Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
+        mesh = model.meshes.first();
+
+        //shader
+        shaderSetup();
+
+        //camera
+        cameraSetup();
+
+        //environment
+        environmentSetup();
+
+        cubeSetup(9);
+        renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
+    }
 
     @Override
     public void render(float delta) {
@@ -88,6 +127,8 @@ public class TestScreen extends BasicScreen {
             camera1.fieldOfView-=0.5;
         }
         controller.update();
+        time+=delta;
+        if(time>Math.PI*2*10)time=0;
 
         Gdx.gl20.glClearColor(0,0,0,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
@@ -95,19 +136,30 @@ public class TestScreen extends BasicScreen {
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 
-        for(int i=0;i<n;i++){
-            for(int j=0;j<n;j++){
-                for(int k=0;k<n;k++){
-                    renderer.draw(instances[i][j][k]);
+        shader.setUniformf("time",time);
+
+        for(MeshInstance[][] platform:instances){
+            for(MeshInstance[] row:platform){
+                for(MeshInstance instance:row){
+                    renderer.draw(instance);
                 }
             }
         }
         renderer.flush();
+
+//        Gdx.gl20.glViewport(-1,-1,2,2);
+
+        Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
+        Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
+
+        MengerSpongeUI.scene().draw();
     }
 
     @Override
     public void resize(int width, int height) {
         camera.viewportWidth=width;
         camera.viewportHeight=height;
+        MengerSpongeUI.scene().resize(width,height);
+        MengerSpongeUI.scene().layout();
     }
 }

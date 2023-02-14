@@ -1,16 +1,17 @@
-package org.systempro.project.test3d;
+package org.systempro.project.basics3d;
 
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
-public class CameraController  {
+public class CameraController extends InputAdapter {
     float verticalAngle=0,horizontalAngle=0;
     Vector3 forwardDir,rightDir;
-    float speed=0.04f;
+    float speed=0.1f;
 
     Camera camera;
     public CameraController(Camera camera){

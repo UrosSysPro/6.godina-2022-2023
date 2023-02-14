@@ -4,31 +4,60 @@ varying vec3 v_position;
 
 uniform sampler2D texture0;
 uniform vec3 cameraPosition;
+uniform float time;
 
 
-vec4 pointLightColor=vec4(1.0);
-vec3 pointLightPosition=vec3(10.0);
+struct Light {
+    int type;
+    vec3 position;
+    vec3 attenuation;
+    vec3 direction;
+    vec3 color;
+};
+
+uniform vec3 ambientColor;
+uniform Light lights[10];
+uniform int lightCount;
+
+
+float fallOff(float d,vec3 attenuation){
+    return 1.0/(d*d*attenuation.x+d*attenuation.y+attenuation.z);
+}
+
+void getLighting(in Light light,out vec3 diffuse,out vec3 specular,vec3 normal,vec3 fragmentPosition){
+
+    float fall=fallOff(length(light.position-fragmentPosition),light.attenuation);
+
+    //diffuse
+    vec3 lightDir=normalize(light.position-fragmentPosition);
+    diffuse=max(dot(lightDir,normal),0.0)*light.color*fall;
+
+    //specular
+    vec3 reflected=reflect(-lightDir,normal);
+    vec3 cameraDir=normalize(cameraPosition-fragmentPosition);
+    specular=pow(max(dot(reflected,cameraDir),0.0),128.0)*light.color*fall;
+}
+
+vec4 totalLighting(){
+    vec3 ambient=ambientColor;
+    vec3 diffuse=vec3(0.0);
+    vec3 specular=vec3(0.0);
+    vec3 normal=normalize(v_normal);
+    vec3 fragmentPosition=v_position;
+    for(int i=0;i<lightCount;i++){
+        vec3 d,s;
+        getLighting(lights[i],d,s,normal,fragmentPosition);
+        diffuse+=d;
+        specular+=s;
+    }
+    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0);
+}
+
 
 void main(){
     vec2 texCoord=v_texCoord0;
     texCoord.y=1.0-texCoord.y;
     vec4 baseColor=texture2D(texture0,texCoord);
-    vec3 normal=normalize(v_normal);
 
-    //ambient
-    vec4 ambient=vec4(0.2,0.3,0.2,1.0);
-
-    //diffuse
-    float diffuseStrenth=0.7;
-    vec3 lightDir=normalize(pointLightPosition-v_position);
-    vec4 diffuse=max(dot(lightDir,normal),0.0)*pointLightColor*diffuseStrenth;
-
-    //specular
-    float specularStrenght=0.3;
-    vec3 reflected=reflect(-lightDir,normal);
-    vec3 cameraDir=normalize(cameraPosition-v_position);
-    vec4 specular=pow(max(dot(reflected,cameraDir),0.0),128.0)*pointLightColor*specularStrenght;
-
-    gl_FragColor=(ambient+diffuse+specular)*baseColor;
-//    gl_FragColor=vec4(v_normal,1.0);
+    gl_FragColor=totalLighting()*baseColor;
 }

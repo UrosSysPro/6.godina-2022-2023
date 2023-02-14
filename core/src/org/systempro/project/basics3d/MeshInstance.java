@@ -1,4 +1,4 @@
-package org.systempro.project.test3d;
+package org.systempro.project.basics3d;
 
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;

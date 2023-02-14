@@ -53,6 +53,7 @@ class SceneInputProcessor(var scene:Scene) extends InputProcessor{
         return true;
       }
     }
+    scene.focused=null;
     false;
   }
 
