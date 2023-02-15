@@ -12,10 +12,11 @@ import com.badlogic.gdx.math.Vector3;
 public class CameraController extends InputAdapter {
     public float verticalAngle=0,horizontalAngle=0;
     public Vector3 forwardDir,rightDir;
-    public float speed=0.1f;
+    public float speed=1f*1000/60;
 
     public Camera camera;
     public boolean focused;
+    public boolean invertedCamera=false;
     public CameraController(Camera camera){
         focused=false;
         this.camera=camera;
@@ -59,27 +60,31 @@ public class CameraController extends InputAdapter {
         z=(float) Math.sin(horizontalAngle+Math.PI/2);
         rightDir.set(x,0,z);
     }
-    public void update(){
+    public void update(float delta){
         if(!focused)return;
         float dx = Gdx.input.getDeltaX();
         float dy = -Gdx.input.getDeltaY();
+        if(invertedCamera){
+            dx=-dx;
+            dy=-dy;
+        }
         float sensitivity = 1f / Math.max(camera.viewportHeight, camera.viewportWidth);
-        horizontalAngle -= dx * sensitivity * Math.PI;
-        verticalAngle -= dy * sensitivity * Math.PI;
+        horizontalAngle -= dx * sensitivity * Math.PI*delta*60/1000*2;
+        verticalAngle -= dy * sensitivity * Math.PI*delta*60/1000*2;
         setDirection(horizontalAngle, verticalAngle);
-        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))camera.position.y -= speed;
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE))     camera.position.y += speed;
-        if(Gdx.input.isKeyPressed(Input.Keys.W))camera.position.add( forwardDir.x*speed,0, forwardDir.z*speed);
-        if(Gdx.input.isKeyPressed(Input.Keys.S))camera.position.add(-forwardDir.x*speed,0,-forwardDir.z*speed);
-        if(Gdx.input.isKeyPressed(Input.Keys.A))camera.position.add(-rightDir.x  *speed,0,-rightDir.z  *speed);
-        if(Gdx.input.isKeyPressed(Input.Keys.D))camera.position.add( rightDir.x  *speed,0, rightDir.z  *speed);
+        if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))camera.position.y -= speed*delta;
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE))     camera.position.y += speed*delta;
+        if(Gdx.input.isKeyPressed(Input.Keys.W))camera.position.add( forwardDir.x*speed*delta,0, forwardDir.z*speed*delta);
+        if(Gdx.input.isKeyPressed(Input.Keys.S))camera.position.add(-forwardDir.x*speed*delta,0,-forwardDir.z*speed*delta);
+        if(Gdx.input.isKeyPressed(Input.Keys.A))camera.position.add(-rightDir.x  *speed*delta,0,-rightDir.z  *speed*delta);
+        if(Gdx.input.isKeyPressed(Input.Keys.D))camera.position.add( rightDir.x  *speed*delta,0, rightDir.z  *speed*delta);
         if(Gdx.input.isKeyPressed(Input.Keys.E) && camera instanceof PerspectiveCamera){
             PerspectiveCamera camera1 = (PerspectiveCamera) camera;
-            camera1.fieldOfView+=0.5;
+            camera1.fieldOfView+=0.5f;
         }
         if(Gdx.input.isKeyPressed(Input.Keys.Q) && camera instanceof PerspectiveCamera){
             PerspectiveCamera camera1 = (PerspectiveCamera) camera;
-            camera1.fieldOfView-=0.5;
+            camera1.fieldOfView-=0.5f;
         }
         camera.update();
     }

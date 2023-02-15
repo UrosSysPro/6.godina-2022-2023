@@ -1,14 +1,20 @@
 package org.systempro.project.test3d
 
-import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.{Color, OrthographicCamera, PerspectiveCamera}
+import org.systempro.project.basics3d.CameraController
 import org.systempro.project.scalaui.{EdgeInsets, Fonts, GestureDetector, Key, Scene, Widget}
 import org.systempro.project.scalaui.widgets.{Align, Alignment, Column, Container, Expanded, Padding, Row, SizedBox, Slider, Switch, Text}
 
 object MengerSpongeUI {
 
-  var scene:Scene=null;
+  var controller:CameraController=null;
 
-  def init(): Unit = {
+  var scene:Scene=null;
+  var fpsKey=Key[Text]();
+  var instanceNumKey=Key[Text]();
+  var frameTimeKey=Key[Text]();
+  def init(controller:CameraController): Unit = {
+    this.controller=controller;
     Fonts.load()
     scene = new Scene(
       root = new Row(
@@ -21,13 +27,23 @@ object MengerSpongeUI {
                 width = 300,
                 child = new Column(
                   children = List(
+                    optionSlider("fov", 60, 150, 60f, (value) => {
+                      this.controller.camera match {
+                        case camera: PerspectiveCamera=>{
+                          camera.fieldOfView=value
+                          camera.update()
+                        }
+                        case _=>;
+                      }
+                    }),
                     optionSlider("hello", 0, 1, 0.5f, (_) => Unit),
+                    optionSwitch("invert",on = false, (value)=>{
+                      this.controller.invertedCamera=value;
+                    }),
                     optionSlider("hello", 0, 1, 0.5f, (_) => Unit),
-                    optionSwitch("invert",on = true, (_)=>{}),
-                    optionSlider("hello", 0, 1, 0.5f, (_) => Unit),
-                    infoWidget(Key[Text](),"fps"),
-                    infoWidget(Key[Text](),"instances"),
-                    infoWidget(Key[Text](),"placeholder")
+                    infoWidget(fpsKey,"fps"),
+                    infoWidget(instanceNumKey,"instances"),
+                    infoWidget(frameTimeKey,"frame time")
                   )
                 )
               )

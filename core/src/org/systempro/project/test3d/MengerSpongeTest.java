@@ -28,8 +28,8 @@ public class MengerSpongeTest extends BasicScreen {
 
     public void shaderSetup(){
         ShaderProgram.pedantic=false;
-        String vertex=Gdx.files.internal("test3d/vertex.glsl").readString();
-        String fragment=Gdx.files.internal("test3d/fragment.glsl").readString();
+        String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();
+        String fragment=Gdx.files.internal("phongShader/fragment.glsl").readString();
         shader=new ShaderProgram(vertex,fragment);
         if(!shader.isCompiled()){
             System.out.println(shader.getLog());
@@ -40,7 +40,7 @@ public class MengerSpongeTest extends BasicScreen {
         float height=Gdx.graphics.getHeight();
         camera=new PerspectiveCamera(70,width,height);
         camera.near=0.1f;
-        camera.far=50;
+        camera.far=100;
         camera.position.set(1,0,1);
         camera.lookAt(0,0,0);
         camera.update();
@@ -95,7 +95,6 @@ public class MengerSpongeTest extends BasicScreen {
     }
     @Override
     public void show() {
-        MengerSpongeUI.init();
         texture=new Texture("test3d/texture.png");
         carTexture=new Texture("test3d/auto.png");
         Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
@@ -105,13 +104,15 @@ public class MengerSpongeTest extends BasicScreen {
         shaderSetup();
         cameraSetup();
         environmentSetup();
-        cubeSetup(9);
+        cubeSetup(81);
         carRenderer=new InstanceRenderer(carMesh,shader,camera,carTexture,environment);
         renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
 
         carInstance=new MeshInstance();
         carInstance.position.set(4.5f,4.5f,4.5f);
         carInstance.update();
+
+        MengerSpongeUI.init(controller);
         Gdx.input.setInputProcessor(new InputMultiplexer(
             MengerSpongeUI.scene().inputProcessor(),
             controller
@@ -121,7 +122,7 @@ public class MengerSpongeTest extends BasicScreen {
     @Override
     public void render(float delta) {
 
-        controller.update();
+        controller.update(delta);
         time+=delta;
         if(time>Math.PI*2*10)time=0;
 
@@ -131,21 +132,28 @@ public class MengerSpongeTest extends BasicScreen {
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 
+        int instancesRendered=0;
         for(MeshInstance[][] platform:instances){
             for(MeshInstance[] row:platform){
                 for(MeshInstance instance:row){
                     renderer.draw(instance);
+                    instancesRendered++;
                 }
             }
         }
         renderer.flush();
 
         carRenderer.draw(carInstance);
+        instancesRendered++;
         carRenderer.flush();
 
         Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 
+
+        MengerSpongeUI.fpsKey().widget().text_$eq(""+Gdx.graphics.getFramesPerSecond());
+        MengerSpongeUI.instanceNumKey().widget().text_$eq(""+instancesRendered);
+        MengerSpongeUI.frameTimeKey().widget().text_$eq(""+delta);
         MengerSpongeUI.scene().animate(delta);
         MengerSpongeUI.scene().draw();
     }

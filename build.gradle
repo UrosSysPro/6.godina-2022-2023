@@ -99,6 +99,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.kotcrab.vis:vis-ui:1.4.11"
         api "org.scala-lang:scala-library:2.11.12"
+        api "com.github.mgsx-dev.gdx-gltf:gltf:2.1.0"
     }
 
 }
