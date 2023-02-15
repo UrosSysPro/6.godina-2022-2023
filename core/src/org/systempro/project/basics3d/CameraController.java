@@ -5,23 +5,42 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
 public class CameraController extends InputAdapter {
-    float verticalAngle=0,horizontalAngle=0;
-    Vector3 forwardDir,rightDir;
-    float speed=0.1f;
+    public float verticalAngle=0,horizontalAngle=0;
+    public Vector3 forwardDir,rightDir;
+    public float speed=0.1f;
 
-    Camera camera;
+    public Camera camera;
+    public boolean focused;
     public CameraController(Camera camera){
+        focused=false;
         this.camera=camera;
         forwardDir=new Vector3();
         rightDir=new Vector3();
         setDirection(verticalAngle,horizontalAngle);
     }
 
-    public void setDirection(float horizontalAngle,float verticalAngle){
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        focused=true;
+        Gdx.input.setCursorCatched(true);
+        return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if(focused && keycode==Input.Keys.ESCAPE){
+            focused=false;
+            Gdx.input.setCursorCatched(false);
+        }
+        return false;
+    }
+
+    public void setDirection(float horizontalAngle, float verticalAngle){
         this.horizontalAngle=horizontalAngle;
         this.verticalAngle=verticalAngle;
         if(this.verticalAngle>Math.PI/2)this.verticalAngle=(float) Math.PI/2;
@@ -41,20 +60,27 @@ public class CameraController extends InputAdapter {
         rightDir.set(x,0,z);
     }
     public void update(){
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            float dx = Gdx.input.getDeltaX();
-            float dy = -Gdx.input.getDeltaY();
-            float sensitivity = 1f / Math.max(camera.viewportHeight, camera.viewportWidth);
-            horizontalAngle -= dx * sensitivity * Math.PI;
-            verticalAngle -= dy * sensitivity * Math.PI;
-            setDirection(horizontalAngle, verticalAngle);
-        }
+        if(!focused)return;
+        float dx = Gdx.input.getDeltaX();
+        float dy = -Gdx.input.getDeltaY();
+        float sensitivity = 1f / Math.max(camera.viewportHeight, camera.viewportWidth);
+        horizontalAngle -= dx * sensitivity * Math.PI;
+        verticalAngle -= dy * sensitivity * Math.PI;
+        setDirection(horizontalAngle, verticalAngle);
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))camera.position.y -= speed;
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE))     camera.position.y += speed;
         if(Gdx.input.isKeyPressed(Input.Keys.W))camera.position.add( forwardDir.x*speed,0, forwardDir.z*speed);
         if(Gdx.input.isKeyPressed(Input.Keys.S))camera.position.add(-forwardDir.x*speed,0,-forwardDir.z*speed);
         if(Gdx.input.isKeyPressed(Input.Keys.A))camera.position.add(-rightDir.x  *speed,0,-rightDir.z  *speed);
         if(Gdx.input.isKeyPressed(Input.Keys.D))camera.position.add( rightDir.x  *speed,0, rightDir.z  *speed);
+        if(Gdx.input.isKeyPressed(Input.Keys.E) && camera instanceof PerspectiveCamera){
+            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
+            camera1.fieldOfView+=0.5;
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.Q) && camera instanceof PerspectiveCamera){
+            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
+            camera1.fieldOfView-=0.5;
+        }
         camera.update();
     }
 }

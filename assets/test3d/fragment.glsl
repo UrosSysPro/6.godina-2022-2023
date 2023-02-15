@@ -4,7 +4,6 @@ varying vec3 v_position;
 
 uniform sampler2D texture0;
 uniform vec3 cameraPosition;
-uniform float time;
 
 
 struct Light {

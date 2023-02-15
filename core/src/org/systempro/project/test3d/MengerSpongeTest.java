@@ -1,7 +1,7 @@
 package org.systempro.project.test3d;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
@@ -10,7 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.basics3d.*;
 
-public class MengerSpngeTest extends BasicScreen {
+public class MengerSpongeTest extends BasicScreen {
     ShaderProgram shader;
     Mesh mesh;
     Camera camera;
@@ -94,38 +94,24 @@ public class MengerSpngeTest extends BasicScreen {
     }
     @Override
     public void show() {
-
         MengerSpongeUI.init();
-        //material
         texture=new Texture("test3d/texture.png");
-
-        //mesh
         Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
         mesh = model.meshes.first();
-
-        //shader
         shaderSetup();
-
-        //camera
         cameraSetup();
-
-        //environment
         environmentSetup();
-
         cubeSetup(9);
         renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
+        Gdx.input.setInputProcessor(new InputMultiplexer(
+            MengerSpongeUI.scene().inputProcessor(),
+            controller
+        ));
     }
 
     @Override
     public void render(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.E)){
-            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
-            camera1.fieldOfView+=0.5;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.Q)){
-            PerspectiveCamera camera1 = (PerspectiveCamera) camera;
-            camera1.fieldOfView-=0.5;
-        }
+
         controller.update();
         time+=delta;
         if(time>Math.PI*2*10)time=0;
@@ -136,8 +122,6 @@ public class MengerSpngeTest extends BasicScreen {
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
 
-        shader.setUniformf("time",time);
-
         for(MeshInstance[][] platform:instances){
             for(MeshInstance[] row:platform){
                 for(MeshInstance instance:row){
@@ -147,11 +131,10 @@ public class MengerSpngeTest extends BasicScreen {
         }
         renderer.flush();
 
-//        Gdx.gl20.glViewport(-1,-1,2,2);
-
         Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
 
+        MengerSpongeUI.scene().animate(delta);
         MengerSpongeUI.scene().draw();
     }
 
