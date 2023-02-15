@@ -12,15 +12,16 @@ import org.systempro.project.basics3d.*;
 
 public class MengerSpongeTest extends BasicScreen {
     ShaderProgram shader;
-    Mesh mesh;
+    Mesh mesh,carMesh;
     Camera camera;
-    Texture texture;
+    Texture texture,carTexture;
     CameraController controller;
     Environment environment;
 
-    InstanceRenderer renderer;
+    InstanceRenderer renderer,carRenderer;
 
     MeshInstance[][][] instances;
+    MeshInstance carInstance;
 
     float time=0;
 
@@ -96,13 +97,21 @@ public class MengerSpongeTest extends BasicScreen {
     public void show() {
         MengerSpongeUI.init();
         texture=new Texture("test3d/texture.png");
+        carTexture=new Texture("test3d/auto.png");
         Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
         mesh = model.meshes.first();
+        Model autoModel = new ObjLoader().loadModel(Gdx.files.internal("test3d/auto.obj"));
+        carMesh = autoModel.meshes.first();
         shaderSetup();
         cameraSetup();
         environmentSetup();
         cubeSetup(9);
+        carRenderer=new InstanceRenderer(carMesh,shader,camera,carTexture,environment);
         renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
+
+        carInstance=new MeshInstance();
+        carInstance.position.set(4.5f,4.5f,4.5f);
+        carInstance.update();
         Gdx.input.setInputProcessor(new InputMultiplexer(
             MengerSpongeUI.scene().inputProcessor(),
             controller
@@ -130,6 +139,9 @@ public class MengerSpongeTest extends BasicScreen {
             }
         }
         renderer.flush();
+
+        carRenderer.draw(carInstance);
+        carRenderer.flush();
 
         Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
         Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
