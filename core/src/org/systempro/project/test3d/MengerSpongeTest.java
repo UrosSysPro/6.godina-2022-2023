@@ -104,7 +104,7 @@ public class MengerSpongeTest extends BasicScreen {
         shaderSetup();
         cameraSetup();
         environmentSetup();
-        cubeSetup(81);
+        cubeSetup(9);
         carRenderer=new InstanceRenderer(carMesh,shader,camera,carTexture,environment);
         renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
 

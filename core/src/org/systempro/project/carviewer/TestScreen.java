@@ -22,15 +22,10 @@ public class TestScreen extends BasicScreen {
 
     @Override
     public void show() {
-        Model model=new ObjLoader().loadModel(Gdx.files.internal("carViewer/hatchbackSports.obj"));
+        Model model=new ObjLoader().loadModel(Gdx.files.internal("carViewer/auto.obj"));
         Mesh mesh=model.meshes.first();
 
-        Pixmap pixmap=new Pixmap(1,1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.LIME);
-        pixmap.drawPixel(0,0,Color.LIME.toIntBits());
-        pixmap.fill();
-        texture=new Texture(pixmap);
-        pixmap.dispose();
+        texture=new Texture("carViewer/auto.png");
 
         float width=Gdx.graphics.getWidth();
         float height=Gdx.graphics.getHeight();

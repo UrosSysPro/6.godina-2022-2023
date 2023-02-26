@@ -12,7 +12,7 @@ import com.badlogic.gdx.math.Vector3;
 public class CameraController extends InputAdapter {
     public float verticalAngle=0,horizontalAngle=0;
     public Vector3 forwardDir,rightDir;
-    public float speed=1f*1000/60;
+    public float speed=0.1f*1000/60;
 
     public Camera camera;
     public boolean focused;
@@ -69,8 +69,8 @@ public class CameraController extends InputAdapter {
             dy=-dy;
         }
         float sensitivity = 1f / Math.max(camera.viewportHeight, camera.viewportWidth);
-        horizontalAngle -= dx * sensitivity * Math.PI*delta*60/1000*2;
-        verticalAngle -= dy * sensitivity * Math.PI*delta*60/1000*2;
+        horizontalAngle -= dx * sensitivity * Math.PI*delta*100;
+        verticalAngle -= dy * sensitivity * Math.PI*delta*100;
         setDirection(horizontalAngle, verticalAngle);
         if(Gdx.input.isKeyPressed(Input.Keys.SHIFT_LEFT))camera.position.y -= speed*delta;
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE))     camera.position.y += speed*delta;
