@@ -59,4 +59,5 @@ void main(){
     vec4 baseColor=texture2D(texture0,texCoord);
 
     gl_FragColor=totalLighting()*baseColor;
+//    gl_FragColor=baseColor;
 }

@@ -26,7 +26,7 @@ public class InstanceRenderer {
         this.camera=camera;
         this.environment=environment;
         instanceData=new float[maxInstances*instanceSize];
-        mesh.enableInstancedRendering(false,maxInstances,
+        mesh.enableInstancedRendering(true,maxInstances,
             new VertexAttribute(Usage.Generic,4,"col0"),
             new VertexAttribute(Usage.Generic,4,"col1"),
             new VertexAttribute(Usage.Generic,4,"col2"),
