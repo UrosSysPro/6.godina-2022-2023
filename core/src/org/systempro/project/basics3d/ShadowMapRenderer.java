@@ -58,7 +58,7 @@ public class ShadowMapRenderer {
         buffer.begin();
         Gdx.gl20.glClearColor(1,1,1,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        Gdx.gl20.glViewport(0,0,bufferWidth,bufferHeight);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
 
@@ -74,4 +74,5 @@ public class ShadowMapRenderer {
         instancesToRender=0;
         buffer.end();
     }
+
 }

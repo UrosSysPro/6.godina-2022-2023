@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.systempro.project.BasicScreen;
-import org.systempro.project.basics3d.CameraController;
-import org.systempro.project.basics3d.Environment;
-import org.systempro.project.basics3d.InstanceRenderer;
-import org.systempro.project.basics3d.MeshInstance;
+import org.systempro.project.basics3d.*;
 
 
 public class TestScreen extends BasicScreen {
@@ -39,7 +36,13 @@ public class TestScreen extends BasicScreen {
         Gdx.input.setInputProcessor(controller);
 
         Environment environment=new Environment();
-        environment.ambientColor.set(1,1,1,1);
+        environment.ambientColor.set(0.1f,0.1f,0.1f,1);
+
+        Light light=new Light();
+        light.position.set(0,3,0);
+        light.color.set(Color.WHITE);
+
+        environment.add(light);
 
         ShaderProgram.pedantic=false;
         String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();

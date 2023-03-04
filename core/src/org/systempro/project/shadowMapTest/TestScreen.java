@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.basics3d.CameraController;
 import org.systempro.project.basics3d.MeshInstance;
+import org.systempro.project.basics3d.NewInstanceRenderer;
 import org.systempro.project.basics3d.ShadowMapRenderer;
 import org.systempro.project.renderers.TextureRenderer;
 
@@ -16,55 +17,56 @@ public class TestScreen extends BasicScreen {
 
     Mesh mesh;
     MeshInstance[] instances;
-    ShadowMapRenderer shadowMapRenderer;
-    TextureRenderer textureRenderer;
-    TextureRegion region;
+    CameraController controller;
+
+    NewInstanceRenderer renderer;
+
+    ShaderProgram shader;
+    Camera camera;
     @Override
     public void show() {
 
         //mesh
         Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
         mesh=model.meshes.first();
-        mesh.enableInstancedRendering(true,1000,
-            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col0"),
-            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col1"),
-            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col2"),
-            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col3")
-        );
-
-        shadowMapRenderer=new ShadowMapRenderer(mesh);
 
         instances=new MeshInstance[26];
         for(int index=0;index<25;index++){
-            int i=index%5;
-            int j=index/5;
+            float i=index%5-2.5f;
+            float j=index/5-2.5f;
             MeshInstance instance=new MeshInstance();
             instance.position.set(i,0,j);
-//            instance.scale.set(1,0.1f,1);
+            instance.scale.set(1,0.1f,1);
             instances[index]=instance;
+            instance.update();
         }
         MeshInstance instance=new MeshInstance();
-        instance.position.set(2.5f,3,2.5f);
+        instance.position.set(0,3,0);
         instances[25]=instance;
+        instance.update();
 
-        region=new TextureRegion(shadowMapRenderer.buffer.getColorBufferTexture());
-        textureRenderer=new TextureRenderer(shadowMapRenderer.buffer.getColorBufferTexture());
+        String vertex=Gdx.files.internal("newInstanceRenderer/vertex.glsl").readString();
+        String fragment=Gdx.files.internal("newInstanceRenderer/fragment.glsl").readString();
+        ShaderProgram.pedantic=false;
+        shader=new ShaderProgram(vertex,fragment);
+        if(!shader.isCompiled()){
+            System.out.println(shader.getLog());
+        }
+
+        camera=new PerspectiveCamera(60,800,600);
+//        camera.
+//        renderer=new NewInstanceRenderer(mesh,shader,)
     }
 
     @Override
     public void render(float delta) {
+        controller.update(delta);
         Gdx.gl20.glClearColor(0,0,0,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
+        Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
+        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
-        for(MeshInstance instance:instances){
-            shadowMapRenderer.draw(instance);
-        }
-        shadowMapRenderer.flush();
 
-        Gdx.gl20.glDisable(GL20.GL_CULL_FACE);
-        Gdx.gl20.glDisable(GL20.GL_DEPTH_TEST);
-
-        textureRenderer.draw(region,0,0,600,600);
-        textureRenderer.flush();
     }
 }
