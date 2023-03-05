@@ -1,16 +1,14 @@
 package org.systempro.project.shadowMapTest;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.systempro.project.BasicScreen;
-import org.systempro.project.basics3d.CameraController;
-import org.systempro.project.basics3d.MeshInstance;
-import org.systempro.project.basics3d.NewInstanceRenderer;
-import org.systempro.project.basics3d.ShadowMapRenderer;
+import org.systempro.project.basics3d.*;
 import org.systempro.project.renderers.TextureRenderer;
 
 public class TestScreen extends BasicScreen {
@@ -54,19 +52,47 @@ public class TestScreen extends BasicScreen {
         }
 
         camera=new PerspectiveCamera(60,800,600);
-//        camera.
-//        renderer=new NewInstanceRenderer(mesh,shader,)
+        camera.near=0.1f;
+        camera.far=100f;
+        camera.update();
+        controller=new CameraController(camera);
+        Gdx.input.setInputProcessor(controller);
+        Texture texture=new Texture("test3d/texture.png");
+        Environment environment=new Environment();
+        Light light=new Light();
+        light.position.set(0,3,0);
+        light.color.set(Color.WHITE);
+        light.attenuation.set(0,0,1.5f);
+        environment.ambientColor.set(0.1f,0.1f,0.1f,1f);
+        environment.add(light);
+        renderer=new NewInstanceRenderer(mesh,shader,camera,texture,environment);
     }
 
     @Override
     public void render(float delta) {
+
+
         controller.update(delta);
+        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         Gdx.gl20.glClearColor(0,0,0,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
 
 
+
+        for(MeshInstance instance:instances){
+            instance.update();
+            renderer.draw(instance);
+        }
+        renderer.flush();
+
+        if(Gdx.input.isKeyPressed(Input.Keys.Z)){
+            for(MeshInstance instance : instances){
+                instance.update();
+                renderer.shadowMapRenderer.draw(instance);
+            }
+            renderer.shadowMapRenderer.flush();
+        }
     }
 }

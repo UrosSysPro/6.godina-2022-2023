@@ -3,6 +3,7 @@ varying vec3 v_normal;
 varying vec3 v_position;
 
 uniform sampler2D texture0;
+uniform sampler2D shadowMap;
 uniform vec3 cameraPosition;
 
 
@@ -57,7 +58,11 @@ void main(){
     vec2 texCoord=v_texCoord0;
     texCoord.y=1.0-texCoord.y;
     vec4 baseColor=texture2D(texture0,texCoord);
-
+//
     gl_FragColor=totalLighting()*baseColor;
-//    gl_FragColor=baseColor;
+//    gl_FragColor=vec4(v_normal,1.0);
+
+
+//    vec2 uv=gl_FragCoord.xy/vec2(800.0,600.0);
+//    gl_FragColor=texture2D(shadowMap,uv);
 }

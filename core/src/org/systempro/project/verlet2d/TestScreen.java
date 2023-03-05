@@ -27,16 +27,16 @@ public class TestScreen extends BasicScreen {
 
         float x= Gdx.input.getX();
         float y=Gdx.graphics.getHeight()-Gdx.input.getY();
-//        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
-//            simultaion.add(x,y);
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
+            simultaion.add(x,y);
 
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             for(Particle particle: simultaion.particles){
                 Vector2 diff=new Vector2(x,y);
                 diff.sub(particle.position);
                 float len=diff.len();
-                particle.prevPosition.x-=Gdx.input.getDeltaX()*(1-(len)/1000)/10;
-                particle.prevPosition.y-=-Gdx.input.getDeltaY()*(1-(len)/1000)/10;
+                particle.prevPosition.x-=Gdx.input.getDeltaX()*(1-(len)/1000)/100;
+                particle.prevPosition.y-=-Gdx.input.getDeltaY()*(1-(len)/1000)/100;
             }
         }
 

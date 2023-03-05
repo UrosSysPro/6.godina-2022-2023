@@ -3,6 +3,8 @@ package org.systempro.project.basics3d;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.systempro.project.basics3d.Environment;
@@ -26,7 +28,14 @@ public class ShadowMapRenderer {
     public ShadowMapRenderer(Mesh mesh){
         buffer=new FrameBuffer(Pixmap.Format.RGB888,bufferWidth,bufferHeight,true);
 
-        this.mesh=mesh;
+//        this.mesh=mesh;
+        this.mesh=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj")).meshes.first();
+        this.mesh.enableInstancedRendering(true,maxInstances,
+            new VertexAttribute(Usage.Generic,4,"col0"),
+            new VertexAttribute(Usage.Generic,4,"col1"),
+            new VertexAttribute(Usage.Generic,4,"col2"),
+            new VertexAttribute(Usage.Generic,4,"col3")
+        );
 
         camera=new PerspectiveCamera(60,bufferWidth,bufferHeight);
         camera.position.set(5,5,5);
@@ -55,10 +64,10 @@ public class ShadowMapRenderer {
         instancesToRender++;
     }
     public void flush(){
-        buffer.begin();
+//        buffer.begin();
+        Gdx.gl20.glViewport(0,0,bufferWidth,bufferHeight);
         Gdx.gl20.glClearColor(1,1,1,1);
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl20.glViewport(0,0,bufferWidth,bufferHeight);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
 
@@ -72,7 +81,7 @@ public class ShadowMapRenderer {
         mesh.setInstanceData(instanceData,0,instancesToRender*instanceSize);
         mesh.render(shader, GL20.GL_TRIANGLES);
         instancesToRender=0;
-        buffer.end();
+//        buffer.end();
     }
 
 }

@@ -8,6 +8,8 @@ public class Particle {
     public final Vector2 position=new Vector2();
     public final Vector2 prevPosition=new Vector2();
     public float mass=1;
+
+    public float radius=5;
     public float restitution=0.9f;
 
     public Particle(float x,float y,float prevX,float prevY,float mass){
@@ -36,6 +38,6 @@ public class Particle {
 
     public void draw(ShapeRenderer renderer){
         renderer.setColor(Color.WHITE);
-        renderer.circle(position.x,position.y,5);
+        renderer.circle(position.x,position.y,radius);
     }
 }
