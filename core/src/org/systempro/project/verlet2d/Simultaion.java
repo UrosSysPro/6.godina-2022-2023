@@ -22,7 +22,14 @@ public class Simultaion {
         sticks=new ArrayList<>();
     }
     public void add(float x,float y){
-        particles.add(new Particle(x,y,x,y,1));
+        for(int i=-2;i<=2;i++){
+            for(int j=-2;j<=2;j++){
+                float px=x+i*10;
+                float py=y+j*10;
+                particles.add(new Particle(px,py,px,py,1));
+            }
+        }
+
     }
     public void addBox(float x,float y){
         float size=50;
@@ -49,14 +56,18 @@ public class Simultaion {
             stickConstraints();
             collisionConstraint();
             boxConstraint();
-            updateParticles(subDelta);
+            updateInertia(subDelta);
         }
     }
 
-    public void updateParticles(float delta){
-        Vector2 force=new Vector2(0,-300f);
+    public void updateInertia(float delta){
+        Vector2 gravity=new Vector2(0,-300f);
         for(Particle particle:particles){
-            particle.update(delta,force);
+            particle.acceleration.add(
+                gravity.x/particle.mass,
+                gravity.y/particle.mass
+            );
+            particle.update(delta);
         }
     }
     public void boxConstraint(){
@@ -104,22 +115,36 @@ public class Simultaion {
             for(int j=0;j<particles.size();j++){
                 if(i==j)continue;
                 Particle p2=particles.get(j);
-                Vector2 diff=new Vector2(p1.position);
-                diff.sub(p2.position);
-                float distance=diff.len();
-                float minDistance=p1.radius+p2.radius;
-                if(distance<minDistance){
-                    float delta=minDistance-distance;
-                    p1.position.add(
-                        diff.x/distance*delta/2,
-                        diff.y/distance*delta/2
-                    );
-                    p2.position.sub(
-                        diff.x/distance*delta/2,
-                        diff.y/distance*delta/2
-                    );
-                }
+
+                resolveCollision(p1,p2);
             }
+        }
+    }
+    public void resolveCollision(Particle p1,Particle p2){
+        Vector2 diff=new Vector2(
+            p1.position.x-p2.position.x,
+            p1.position.y-p2.position.y
+        );
+        float distance=diff.len();
+        float minDistance=p1.radius+p2.radius;
+        if(distance<minDistance){
+            float delta=minDistance-distance;
+            Vector2 v1=new Vector2(
+              p1.position.x-p1.prevPosition.x,
+              p1.position.y-p1.prevPosition.y
+            );
+            Vector2 v2=new Vector2(
+                p2.position.x-p2.prevPosition.x,
+                p2.position.y-p2.prevPosition.y
+            );
+            p1.position.add(
+                diff.x/distance*delta/2,
+                diff.y/distance*delta/2
+            );
+            p2.position.sub(
+                diff.x/distance*delta/2,
+                diff.y/distance*delta/2
+            );
         }
     }
 

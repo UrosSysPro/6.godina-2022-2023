@@ -32,11 +32,7 @@ public class TestScreen extends BasicScreen {
 
         if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
             for(Particle particle: simultaion.particles){
-                Vector2 diff=new Vector2(x,y);
-                diff.sub(particle.position);
-                float len=diff.len();
-                particle.prevPosition.x-=Gdx.input.getDeltaX()*(1-(len)/1000)/100;
-                particle.prevPosition.y-=-Gdx.input.getDeltaY()*(1-(len)/1000)/100;
+                particle.acceleration.add(Gdx.input.getDeltaX()*100,-Gdx.input.getDeltaY()*600);
             }
         }
 

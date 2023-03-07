@@ -15,10 +15,8 @@ public class Stick {
     public void apply(){
         Vector2 diff=new Vector2(particle1.position);
         diff.sub(particle2.position);
-//        Vector2 diff=new Vector2(particle2.position);
-//        diff.sub(particle1.position);
+
         float diffLength=diff.len();
-//        System.out.println(diffLength);
 
         float diffFactor=(length-diffLength)/diffLength*0.5f;
         Vector2 offset=new Vector2(

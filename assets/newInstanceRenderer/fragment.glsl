@@ -1,6 +1,7 @@
 varying vec2 v_texCoord0;
 varying vec3 v_normal;
 varying vec3 v_position;
+varying vec4 v_viewPosition;
 
 uniform sampler2D texture0;
 uniform sampler2D shadowMap;
@@ -38,6 +39,17 @@ void getLighting(in Light light,out vec3 diffuse,out vec3 specular,vec3 normal,v
     specular=pow(max(dot(reflected,cameraDir),0.0),128.0)*light.color*fall;
 }
 
+vec4 getShadowLighting(){
+    vec2 uv=v_viewPosition.xy/v_viewPosition.w*0.5+0.5;
+    float currentDistance=v_viewPosition.z/v_viewPosition.w*0.5+0.5;
+    float mapDistance=texture2D(shadowMap,uv).x;
+    if(abs(currentDistance-mapDistance)<0.0029){
+        return vec4(0.5);
+    }else{
+        return vec4(0.0);
+    }
+}
+
 vec4 totalLighting(){
     vec3 ambient=ambientColor;
     vec3 diffuse=vec3(0.0);
@@ -50,7 +62,7 @@ vec4 totalLighting(){
         diffuse+=d;
         specular+=s;
     }
-    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0);
+    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0)+getShadowLighting();
 }
 
 
@@ -59,10 +71,11 @@ void main(){
     texCoord.y=1.0-texCoord.y;
     vec4 baseColor=texture2D(texture0,texCoord);
 //
-    gl_FragColor=totalLighting()*baseColor;
-//    gl_FragColor=vec4(v_normal,1.0);
+//    gl_FragColor=totalLighting()*baseColor;
 
-
-//    vec2 uv=gl_FragCoord.xy/vec2(800.0,600.0);
-//    gl_FragColor=texture2D(shadowMap,uv);
+//    vec2 uv=v_viewPosition.xy/v_viewPosition.w*0.5+0.5;
+//    float currentDistance=v_viewPosition.z/v_viewPosition.w*0.5;
+//    float mapDistance=texture2D(shadowMap,uv).x*0.5+0.5;
+//    gl_FragColor=vec4(mapDistance);
+    gl_FragColor=texture2D(shadowMap,gl_FragCoord.xy/vec2(800,600));
 }
