@@ -1,7 +1,10 @@
 package org.systempro.project.basics3d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import org.systempro.project.basics3d.Environment;
 import org.systempro.project.basics3d.Light;
@@ -18,6 +21,7 @@ public class InstanceRenderer {
     public int instanceSize=16;
     public int instancesToRender=0;
     public float[] instanceData;
+    public static CameraController controller;
 
     public InstanceRenderer(Mesh mesh,ShaderProgram shader,Camera camera,Texture texture,Environment environment){
         this.texture=texture;
@@ -70,6 +74,44 @@ public class InstanceRenderer {
         mesh.setInstanceData(instanceData,0,instancesToRender*instanceSize);
         mesh.render(shader, GL20.GL_TRIANGLES);
         instancesToRender=0;
+    }
+
+    public static InstanceRenderer createInstanceRenderer(){
+        Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
+        Mesh mesh=model.meshes.first();
+
+        Texture texture=new Texture("test3d/texture.png");
+
+        float width=Gdx.graphics.getWidth();
+        float height=Gdx.graphics.getHeight();
+        Camera camera=new PerspectiveCamera(60,width,height);
+        camera.position.set(0,0,0);
+        camera.near=0.1f;
+        camera.far=100;
+        camera.update();
+
+        controller=new CameraController(camera);
+        Gdx.input.setInputProcessor(controller);
+
+        Environment environment=new Environment();
+        environment.ambientColor.set(1,1,1,1);
+//        environment.ambientColor.set(0.1f,0.1f,0.1f,1);
+//
+//        Light light=new Light();
+//        light.position.set(0,3,0);
+//        light.color.set(Color.WHITE);
+//
+//        environment.add(light);
+
+        ShaderProgram.pedantic=false;
+        String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();
+        String fragment=Gdx.files.internal("phongShader/fragment.glsl").readString();
+        ShaderProgram shader=new ShaderProgram(vertex,fragment);
+        if(!shader.isCompiled()){
+            System.out.println(shader.getLog());
+        }
+
+        return new InstanceRenderer(mesh,shader,camera,texture,environment);
     }
 
 }
