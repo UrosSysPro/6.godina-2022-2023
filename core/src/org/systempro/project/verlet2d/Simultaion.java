@@ -2,11 +2,13 @@ package org.systempro.project.verlet2d;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Disposable;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.*;
 
-public class Simultaion {
+public class Simultaion implements Disposable {
 
     public ShapeRenderer renderer;
     public Random random;
@@ -14,18 +16,31 @@ public class Simultaion {
     public ArrayList<Particle> particles;
     public ArrayList<Stick> sticks;
     public float width=800,height=600;
+    public float oldDelta=1000f/60f/8f;
+    public HashTable table;
+    public ExecutorService service;
+    private ArrayList<Future> futures;
+    private CollisionColumnThread[] threads;
 
     public Simultaion(){
         random=new Random();
         renderer=new ShapeRenderer();
         particles=new ArrayList<>();
         sticks=new ArrayList<>();
+        table=new HashTable((int) width, (int) height,10);
+        service=Executors.newFixedThreadPool(16);
+        futures=new ArrayList<>();
+        threads=new CollisionColumnThread[table.cells.length];
+        for(int i=0;i<threads.length;i++){
+            threads[i]=new CollisionColumnThread(table.cells, i);
+        }
     }
     public void add(float x,float y){
-        for(int i=-2;i<=2;i++){
-            for(int j=-2;j<=2;j++){
-                float px=x+i*10;
-                float py=y+j*10;
+        int count=10;
+        for(int i=-count/2;i<=count/2;i++){
+            for(int j=-count/2;j<=count/2;j++){
+                float px=x+i*6;
+                float py=y+j*6;
                 particles.add(new Particle(px,py,px,py,1));
             }
         }
@@ -49,8 +64,7 @@ public class Simultaion {
         sticks.add(new Stick(particles[0],particles[3],size*(float) Math.sqrt(2)));
 //        sticks.add(new Stick(particles[1],particles[2],size*(float) Math.sqrt(2)));
     }
-    public void update(float delta){
-        int subSteps=8;
+    public void update(float delta,int subSteps){
         float subDelta=delta/subSteps;
         for(int i=0;i<subSteps;i++){
             stickConstraints();
@@ -67,7 +81,8 @@ public class Simultaion {
                 gravity.x/particle.mass,
                 gravity.y/particle.mass
             );
-            particle.update(delta);
+            particle.update(oldDelta,delta);
+            oldDelta=delta;
         }
     }
     public void boxConstraint(){
@@ -109,7 +124,7 @@ public class Simultaion {
         }
     }
 
-    public void collisionConstraint(){
+    public void collisionConstraintSingleThread(){
         for(int i=0;i<particles.size();i++){
             Particle p1=particles.get(i);
             for(int j=0;j<particles.size();j++){
@@ -117,6 +132,52 @@ public class Simultaion {
                 Particle p2=particles.get(j);
 
                 resolveCollision(p1,p2);
+            }
+        }
+    }
+
+    public void collisionConstraintHashTable(){
+        table.removeAll();
+        for(Particle p:particles){
+            table.insert(p);
+        }
+        for(int i=0;i<table.cells.length;i++){
+            for(int j=0;j<table.cells[i].length;j++){
+                for(Particle p:table.cells[i][j]){
+                    collideWithNearCells(p,i,j);
+                }
+            }
+        }
+    }
+
+    public void collisionConstraint() {
+        table.removeAll();
+        for(Particle p:particles){
+            table.insert(p);
+        }
+        try{
+            for(int offset=0;offset<3;offset++){
+                for(int i=offset;i<table.cells.length;i+=3){
+                    futures.add(service.submit(threads[i]));
+                }
+                for(Future f:futures){
+                    f.get();
+                }
+                futures.clear();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    private void collideWithNearCells(Particle p1,int x,int y){
+        for(int i=-1;i<=1;i++){
+            for(int j=-1;j<=1;j++){
+                if(x+i<0||x+i>=table.cells.length||y+j<0||y+j>=table.cells[0].length)continue;
+                for(Particle p2:table.cells[x+i][y+j]){
+                    if(p1==p2)continue;
+                    resolveCollision(p1,p2);
+                }
             }
         }
     }
@@ -155,14 +216,26 @@ public class Simultaion {
         renderer.end();
     }
 
-    public void drawParticles(){
+    private void drawParticles(){
         for(Particle particle:particles){
             particle.draw(renderer);
         }
     }
-    public void drawSticks(){
+    private void drawSticks(){
         for(Stick stick:sticks){
             stick.draw(renderer);
+        }
+    }
+
+    @Override
+    public void dispose() {
+        service.shutdown();
+        try {
+            if(!service.awaitTermination(1,TimeUnit.MILLISECONDS)){
+                System.out.println("Error");
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 }

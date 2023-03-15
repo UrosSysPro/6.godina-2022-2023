@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
+import org.systempro.project.scalaui.Scene;
 
 import java.util.ArrayList;
 import java.util.Vector;
@@ -14,10 +15,13 @@ public class TestScreen extends BasicScreen {
 
     public Simultaion simultaion;
     public boolean paused=false;
+    public Scene scene;
 
     @Override
     public void show() {
-       simultaion=new Simultaion();
+        TestScreenUI.init();
+        scene=TestScreenUI.scene();
+        simultaion=new Simultaion();
     }
 
     @Override
@@ -38,10 +42,27 @@ public class TestScreen extends BasicScreen {
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))
             simultaion.addBox(x,y);
-
+        long start=System.currentTimeMillis();
         if(!paused)
-            simultaion.update(0.016f);
+            simultaion.update(delta,4);
+        long physics=System.currentTimeMillis();
         simultaion.draw();
+        long draw=System.currentTimeMillis();
+
+        TestScreenUI.physicsTime().widget().text_$eq("physics update: "+(physics-start));
+        TestScreenUI.drawTime().widget().text_$eq("draw: "+(draw-physics));
+        TestScreenUI.particles().widget().text_$eq("particles: "+(simultaion.particles.size()));
+
+        scene.layout();
+        scene.animate(delta);
+        scene.draw();
+        long ui=System.currentTimeMillis();
+        TestScreenUI.ui().widget().text_$eq("ui: "+(ui-draw));
+
     }
 
+    @Override
+    public void dispose() {
+        simultaion.dispose();
+    }
 }
