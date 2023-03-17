@@ -1,24 +1,26 @@
 package org.systempro.project.verlet2d;
 
-import com.badlogic.gdx.math.Vector2;
-
 import java.util.ArrayList;
 
-public class CollisionColumnThread implements Runnable {
+public class MultiColumnCollisionThread implements Runnable {
+
 
     private final ArrayList<Particle>[][] cells;
-    private final int i;
+    private int start,end;
 
-    public CollisionColumnThread(ArrayList<Particle>[][] cells,int i){
+    public MultiColumnCollisionThread(ArrayList<Particle>[][] cells,int start,int end){
         this.cells=cells;
-        this.i=i;
+        this.start=start;
+        this.end=end;
     }
 
     @Override
     public void run() {
-        for (int j = 0; j < cells[i].length; j++) {
-            for (Particle p : cells[i][j]) {
-                collideWithNearCells(p, i, j);
+        for(int i=start;i<=end;i++) {
+            for (int j = 0; j < cells[i].length; j++) {
+                for (Particle p : cells[i][j]) {
+                    collideWithNearCells(p, i, j);
+                }
             }
         }
     }

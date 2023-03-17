@@ -1,5 +1,6 @@
 package org.systempro.project.verlet2d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
@@ -15,8 +16,8 @@ public class Simultaion implements Disposable {
 
     public ArrayList<Particle> particles;
     public ArrayList<Stick> sticks;
-    public float width=800,height=600;
-    public float oldDelta=1000f/60f/8f;
+    public float width= Gdx.graphics.getWidth(),height=Gdx.graphics.getHeight();
+    public float oldDelta=1/60/8f;
     public HashTable table;
     public ExecutorService service;
     private ArrayList<Future> futures;
@@ -69,20 +70,26 @@ public class Simultaion implements Disposable {
         for(int i=0;i<subSteps;i++){
             stickConstraints();
             collisionConstraint();
+//            collisionConstraintMultiColumn();
             boxConstraint();
+            applyForces();
             updateInertia(subDelta);
+            oldDelta=subDelta;
         }
     }
 
     public void updateInertia(float delta){
+        for(Particle particle:particles){
+            particle.update(oldDelta,delta);
+        }
+    }
+    public void applyForces(){
         Vector2 gravity=new Vector2(0,-300f);
         for(Particle particle:particles){
             particle.acceleration.add(
                 gravity.x/particle.mass,
                 gravity.y/particle.mass
             );
-            particle.update(oldDelta,delta);
-            oldDelta=delta;
         }
     }
     public void boxConstraint(){
@@ -113,6 +120,27 @@ public class Simultaion implements Disposable {
                 x=width-r;
                 prevX=x+vx*restitution;
             }
+//            if(y<r){
+//                float vy=y-prevY;
+//                y=r;
+//                prevY=y+vy;
+//            }
+//            if(y>height-r){
+//                float vy=y-prevY;
+//                y=height-r;
+//                prevY=y+vy;
+//            }
+//            if(x<r){
+//                float vx=x-prevX;
+//                x=r;
+//                prevX=x+vx;
+//            }
+//            if(x>width-r){
+//                float vx=x-prevX;
+//                x=width-r;
+//                prevX=x+vx;
+//            }
+
             particle.position.set(x,y);
             particle.prevPosition.set(prevX,prevY);
         }
@@ -159,6 +187,32 @@ public class Simultaion implements Disposable {
             for(int offset=0;offset<3;offset++){
                 for(int i=offset;i<table.cells.length;i+=3){
                     futures.add(service.submit(threads[i]));
+                }
+                for(Future f:futures){
+                    f.get();
+                }
+                futures.clear();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public void collisionConstraintMultiColumn(){
+        table.removeAll();
+        for(Particle p:particles){
+            table.insert(p);
+        }
+        try{
+            int columns=5;
+
+            for(int offset=0;offset<2;offset++){
+                for(int i=offset*columns;i<table.cells.length;i+=columns){
+                    int start=i;
+                    int end=i+columns;
+                    if(i+columns>=table.cells.length)end=table.cells.length-1;
+                    futures.add(service.submit(new MultiColumnCollisionThread(table.cells, start,end)));
                 }
                 for(Future f:futures){
                     f.get();
@@ -229,10 +283,10 @@ public class Simultaion implements Disposable {
 
     @Override
     public void dispose() {
-        service.shutdown();
+        service.shutdownNow();
         try {
             if(!service.awaitTermination(1,TimeUnit.MILLISECONDS)){
-                System.out.println("Error");
+                System.out.println("Error za brisanje threadova");
             }
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
