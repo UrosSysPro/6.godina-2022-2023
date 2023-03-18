@@ -21,7 +21,7 @@ public class TestScreen extends BasicScreen {
     public void show() {
         TestScreenUI.init();
         scene=TestScreenUI.scene();
-        simultaion=new Simultaion();
+        simultaion=new Simultaion(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
     }
 
     @Override

@@ -37,7 +37,7 @@ public class ShadowMapRenderer {
             new VertexAttribute(Usage.Generic,4,"col3")
         );
 
-        camera=new PerspectiveCamera(60,bufferWidth,bufferHeight);
+        camera=new OrthographicCamera(bufferWidth,bufferHeight);
         camera.position.set(5,10,5);
         camera.lookAt(0,0,0);
         camera.near=near;

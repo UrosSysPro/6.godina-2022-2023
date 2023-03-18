@@ -16,14 +16,16 @@ public class Simultaion implements Disposable {
 
     public ArrayList<Particle> particles;
     public ArrayList<Stick> sticks;
-    public float width= Gdx.graphics.getWidth(),height=Gdx.graphics.getHeight();
-    public float oldDelta=1/60/8f;
+    public float width,height;
+    public float oldDelta=1f/60f/8f;
     public HashTable table;
     public ExecutorService service;
     private ArrayList<Future> futures;
     private CollisionColumnThread[] threads;
 
-    public Simultaion(){
+    public Simultaion(float width,float height){
+        this.width=width;
+        this.height=height;
         random=new Random();
         renderer=new ShapeRenderer();
         particles=new ArrayList<>();
@@ -36,40 +38,19 @@ public class Simultaion implements Disposable {
             threads[i]=new CollisionColumnThread(table.cells, i);
         }
     }
-    public void add(float x,float y){
-        int count=10;
-        for(int i=-count/2;i<=count/2;i++){
-            for(int j=-count/2;j<=count/2;j++){
-                float px=x+i*6;
-                float py=y+j*6;
-                particles.add(new Particle(px,py,px,py,1));
-            }
-        }
-
+    public void add(Particle p){
+        particles.add(p);
     }
-    public void addBox(float x,float y){
-        float size=50;
-        Particle[] particles=new Particle[4];
-        for(int index=0;index<particles.length;index++){
-            int i=index%2;
-            int j=index/2;
-            float px=x+(i==0?size/2:(-size/2));
-            float py=y+(j==0?size/2:(-size/2));
-            particles[index]=new Particle(px,py,px,py,1);
-            this.particles.add(particles[index]);
-        }
-        sticks.add(new Stick(particles[0],particles[1],size));
-        sticks.add(new Stick(particles[0],particles[2],size));
-        sticks.add(new Stick(particles[3],particles[1],size));
-        sticks.add(new Stick(particles[3],particles[2],size));
-        sticks.add(new Stick(particles[0],particles[3],size*(float) Math.sqrt(2)));
-//        sticks.add(new Stick(particles[1],particles[2],size*(float) Math.sqrt(2)));
+    public void add(Stick s){
+        sticks.add(s);
     }
     public void update(float delta,int subSteps){
+        if(delta>0.05f)delta=0.05f;
         float subDelta=delta/subSteps;
         for(int i=0;i<subSteps;i++){
             stickConstraints();
-            collisionConstraint();
+            collisionConstraintHashTable();
+//            collisionConstraint();
 //            collisionConstraintMultiColumn();
             boxConstraint();
             applyForces();
@@ -87,8 +68,8 @@ public class Simultaion implements Disposable {
         Vector2 gravity=new Vector2(0,-300f);
         for(Particle particle:particles){
             particle.acceleration.add(
-                gravity.x/particle.mass,
-                gravity.y/particle.mass
+                gravity.x,
+                gravity.y
             );
         }
     }
@@ -159,7 +140,7 @@ public class Simultaion implements Disposable {
                 if(i==j)continue;
                 Particle p2=particles.get(j);
 
-                resolveCollision(p1,p2);
+                Particle.resolveCollision(p1,p2);
             }
         }
     }
@@ -230,36 +211,9 @@ public class Simultaion implements Disposable {
                 if(x+i<0||x+i>=table.cells.length||y+j<0||y+j>=table.cells[0].length)continue;
                 for(Particle p2:table.cells[x+i][y+j]){
                     if(p1==p2)continue;
-                    resolveCollision(p1,p2);
+                    Particle.resolveCollision(p1,p2);
                 }
             }
-        }
-    }
-    public void resolveCollision(Particle p1,Particle p2){
-        Vector2 diff=new Vector2(
-            p1.position.x-p2.position.x,
-            p1.position.y-p2.position.y
-        );
-        float distance=diff.len();
-        float minDistance=p1.radius+p2.radius;
-        if(distance<minDistance){
-            float delta=minDistance-distance;
-            Vector2 v1=new Vector2(
-              p1.position.x-p1.prevPosition.x,
-              p1.position.y-p1.prevPosition.y
-            );
-            Vector2 v2=new Vector2(
-                p2.position.x-p2.prevPosition.x,
-                p2.position.y-p2.prevPosition.y
-            );
-            p1.position.add(
-                diff.x/distance*delta/2,
-                diff.y/distance*delta/2
-            );
-            p2.position.sub(
-                diff.x/distance*delta/2,
-                diff.y/distance*delta/2
-            );
         }
     }
 
