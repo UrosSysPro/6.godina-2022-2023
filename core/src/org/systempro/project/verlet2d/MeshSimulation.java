@@ -21,7 +21,10 @@ public class MeshSimulation extends BasicScreen {
         ScreenUtils.clear(0,0,0,1);
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-            createBox(simultaion,3,1.3f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
+            createBox(simultaion,3,1f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
+        }
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
+            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
@@ -31,11 +34,11 @@ public class MeshSimulation extends BasicScreen {
     }
 
     public void createBox(Simultaion simultaion,float r,float d,int n,float offsetX,float offsetY){
-        Particle[][] particles=new Particle[n][n];
+        Particle[][] particles=new Particle[n][1];
         for(int i=0;i<particles.length;i++){
             for(int j=0;j<particles[i].length;j++){
                 float x=offsetX+i*r*2*d;
-                float y=offsetY+j*r*2*d;
+                float y=offsetY+i*r*2*d;
                 Particle p=new Particle(x,y,r,0.5f,1);
                 simultaion.particles.add(p);
                 particles[i][j]=p;
