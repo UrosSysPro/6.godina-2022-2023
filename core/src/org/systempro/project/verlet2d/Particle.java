@@ -9,7 +9,7 @@ public class Particle {
     public final Vector2 position=new Vector2();
     public final Vector2 prevPosition=new Vector2();
     public final Vector2 acceleration=new Vector2();
-    public float mass;
+    public float mass,invMass;
     public float radius;
     public float restitution;
 
@@ -19,6 +19,7 @@ public class Particle {
         this.radius=radius;
         this.mass=mass;
         this.restitution=restitution;
+        invMass=1f/mass;
     }
     public Particle(float x,float y,float radius){
         this(x,y,radius,0.5f,1f);
@@ -56,15 +57,21 @@ public class Particle {
             Vector2 vrel=new Vector2(v1).sub(v2);
             Vector2 normal=new Vector2(p2.position).sub(p1.position).nor();
             float c=Math.min(p1.restitution,p2.restitution);
-            float impulseMagnitude=-(1+c)*normal.dot(vrel)/(1f/p1.mass+1f/p2.mass);
+            float impulseMagnitude=-(1+c)*normal.dot(vrel)/(p1.invMass+p2.invMass);
 
 
             Vector2 diff=new Vector2(p1.position).sub(p2.position).nor();
-            float delta=(minDistance-distance)/2;
+            float delta=(minDistance-distance);
             diff.x*=delta;
             diff.y*=delta;
-            p1.position.add(diff);
-            p2.position.sub(diff);
+            p1.position.add(
+                diff.x*p1.invMass/(p1.invMass+p2.invMass),
+                diff.y*p1.invMass/(p1.invMass+p2.invMass)
+            );
+            p2.position.sub(
+                diff.x*p2.invMass/(p1.invMass+p2.invMass),
+                diff.y*p2.invMass/(p1.invMass+p2.invMass)
+            );
 
             v1.add(
                 normal.x*impulseMagnitude/p1.mass,

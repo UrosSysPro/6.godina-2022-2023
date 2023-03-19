@@ -62,7 +62,7 @@ vec4 totalLighting(){
         diffuse+=d;
         specular+=s;
     }
-    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0);//+getShadowLighting();
+    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0)+getShadowLighting();
 }
 
 
@@ -78,4 +78,6 @@ void main(){
 //    float mapDistance=texture2D(shadowMap,uv).x*0.5+0.5;
 //    gl_FragColor=vec4(mapDistance);
 //    gl_FragColor=texture2D(shadowMap,gl_FragCoord.xy/vec2(800,600));
+//    vec4 color=texture2D(shadowMap,v_viewPosition.xy/v_viewPosition.w*0.5+0.5);
+//    gl_FragColor=color;
 }

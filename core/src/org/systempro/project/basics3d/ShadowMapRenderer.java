@@ -16,7 +16,7 @@ public class ShadowMapRenderer {
     public Mesh mesh;
     public ShaderProgram shader;
     public Camera camera;
-    public float near=0.1f,far=20f;
+    public float near=0.1f,far=100f;
     public int maxInstances=1000;
     public int instanceSize=16;
     public int instancesToRender=0;
@@ -37,11 +37,12 @@ public class ShadowMapRenderer {
             new VertexAttribute(Usage.Generic,4,"col3")
         );
 
-        camera=new OrthographicCamera(bufferWidth,bufferHeight);
-        camera.position.set(5,10,5);
+        camera=new OrthographicCamera(bufferWidth/100,bufferHeight/100);
+        camera.position.set(5,5,5);
         camera.lookAt(0,0,0);
         camera.near=near;
         camera.far=far;
+
         camera.update();
 
         ShaderProgram.pedantic=false;

@@ -19,18 +19,23 @@ public class Stick {
     }
 
     public void apply(){
-        Vector2 diff=new Vector2(particle1.position);
-        diff.sub(particle2.position);
+        Vector2 diff=new Vector2(particle1.position).sub(particle2.position);
 
         float diffLength=diff.len();
 
-        float diffFactor=(length-diffLength)/diffLength*0.5f;
+        float diffFactor=(length-diffLength)/diffLength;
         Vector2 offset=new Vector2(
           diff.x*diffFactor*stiffness,
           diff.y*diffFactor*stiffness
         );
-        particle1.position.add(offset);
-        particle2.position.sub(offset);
+        particle1.position.add(
+            offset.x*particle1.invMass/(particle1.invMass+ particle2.invMass),
+            offset.y*particle1.invMass/(particle1.invMass+ particle2.invMass)
+        );
+        particle2.position.sub(
+            offset.x*particle2.invMass/(particle1.invMass+ particle2.invMass),
+            offset.y*particle2.invMass/(particle1.invMass+ particle2.invMass)
+        );
     }
 
     public void draw(ShapeRenderer renderer){
