@@ -15,11 +15,17 @@ public class Snake {
     int width=50;
     int height=50;
 
+    public boolean gameOver=false;
+
     public Snake(){
         renderer=InstanceRenderer.createInstanceRenderer();
+        renderer.controller.setDirection((float) -(Math.PI/2),0);
+        Gdx.input.setInputProcessor(null);
+        renderer.camera.position.set(0,0,10);
+        renderer.camera.update();
         parts=new ArrayList<>();
         add(0,0);
-        for(int i=0;i<5;i++)add();
+        for(int i=0;i<100;i++)add();
         smerX=0;
         smerY=0;
     }
@@ -31,19 +37,19 @@ public class Snake {
         parts.add(new SnakePart(last.x,last.y));
     }
     public void input(){
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)&&smerX==0){
             smerY=0;
             smerX=-1;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)&&smerX==0){
             smerY=0;
             smerX=1;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)&&smerY==0){
             smerY=1;
             smerX=0;
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)&&smerY==0){
             smerY=-1;
             smerX=0;
         }
@@ -60,6 +66,19 @@ public class Snake {
         if(first.y>=height)first.y=0;
         if(first.x<0)first.x=width-1;
         if(first.y<0)first.y=height-1;
+
+        for(SnakePart p:parts){
+            if(p==first)continue;
+            if(first.x==p.x&&first.y==p.y){
+                gameOver=true;
+            }
+        }
+        if(gameOver){
+            gameOver=false;
+            parts.clear();
+            add(0,0);
+            for(int i=0;i<100;i++)add();
+        }
     }
     public void draw(int counter,int maxFrames){
         MeshInstance instance=new MeshInstance();
@@ -77,10 +96,11 @@ public class Snake {
             renderer.draw(instance);
         }
         SnakePart first=parts.get(0);
-        instance.position.set(
-            first.x*(1-a)+(first.x+smerX)*a,
-            first.y*(1-a)+(first.y+smerY)*a,
-            0);
+        float x=first.x*(1-a)+(first.x+smerX)*a;
+        float y=first.y*(1-a)+(first.y+smerY)*a;
+        renderer.camera.position.set(25,25,50);
+        renderer.camera.update();
+        instance.position.set(x,y,0);
         instance.update();
         renderer.draw(instance);
         renderer.flush();

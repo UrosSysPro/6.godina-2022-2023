@@ -38,7 +38,7 @@ public class ShadowMapRenderer {
         );
 
         camera=new OrthographicCamera(bufferWidth/100,bufferHeight/100);
-        camera.position.set(5,5,5);
+        camera.position.set(5,10,5);
         camera.lookAt(0,0,0);
         camera.near=near;
         camera.far=far;

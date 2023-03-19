@@ -16,7 +16,7 @@ public class CameraController extends InputAdapter {
 
     public Camera camera;
     public boolean focused;
-    public boolean invertedCamera=false;
+    public boolean invertedCamera=true;
     public CameraController(Camera camera){
         focused=false;
         this.camera=camera;
