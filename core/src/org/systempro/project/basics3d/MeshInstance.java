@@ -1,5 +1,8 @@
 package org.systempro.project.basics3d;
 
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -24,4 +27,13 @@ public class MeshInstance {
             .scale(scale.x,scale.y,scale.z);
     }
 
+
+    public static void enableInstancing(Mesh mesh,int maxInstances){
+        mesh.enableInstancedRendering(true,maxInstances,
+            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col0"),
+            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col1"),
+            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col2"),
+            new VertexAttribute(VertexAttributes.Usage.Generic,4,"col3")
+        );
+    }
 }

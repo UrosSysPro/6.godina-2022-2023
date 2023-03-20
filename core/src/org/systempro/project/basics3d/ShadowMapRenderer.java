@@ -16,11 +16,11 @@ public class ShadowMapRenderer {
     public Mesh mesh;
     public ShaderProgram shader;
     public Camera camera;
-    public float near=0.1f,far=100f;
-    public int maxInstances=1000;
-    public int instanceSize=16;
-    public int instancesToRender=0;
-    public float[] instanceData;
+    public float near=0.1f,far=15f;
+    private int maxInstances=1000;
+    private int instanceSize=16;
+    private int instancesToRender=0;
+    private float[] instanceData;
 
     public FrameBuffer buffer;
     public final int bufferWidth=1024,bufferHeight=1024;
@@ -37,7 +37,7 @@ public class ShadowMapRenderer {
             new VertexAttribute(Usage.Generic,4,"col3")
         );
 
-        camera=new OrthographicCamera(bufferWidth/100,bufferHeight/100);
+        camera=new OrthographicCamera(10,10);
         camera.position.set(5,10,5);
         camera.lookAt(0,0,0);
         camera.near=near;
@@ -70,6 +70,7 @@ public class ShadowMapRenderer {
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
         Gdx.gl20.glViewport(0,0,bufferWidth,bufferHeight);
         Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
+        Gdx.gl20.glCullFace(GL20.GL_FRONT);
         Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
 
         shader.bind();
@@ -83,6 +84,7 @@ public class ShadowMapRenderer {
         mesh.render(shader, GL20.GL_TRIANGLES);
         instancesToRender=0;
         buffer.end();
+        Gdx.gl20.glCullFace(GL20.GL_BACK);
     }
 
 }

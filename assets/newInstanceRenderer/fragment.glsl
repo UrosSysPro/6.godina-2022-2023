@@ -43,7 +43,7 @@ vec4 getShadowLighting(){
     vec2 uv=v_viewPosition.xy/v_viewPosition.w*0.5+0.5;
     float currentDistance=v_viewPosition.z/v_viewPosition.w*0.5+0.5;
     float mapDistance=texture2D(shadowMap,uv).x;
-    if(abs(currentDistance-mapDistance)<0.0029){
+    if(currentDistance<mapDistance-.003){
         return vec4(0.5);
     }else{
         return vec4(0.0);
@@ -70,14 +70,5 @@ void main(){
     vec2 texCoord=v_texCoord0;
     texCoord.y=1.0-texCoord.y;
     vec4 baseColor=texture2D(texture0,texCoord);
-//
     gl_FragColor=totalLighting()*baseColor;
-
-//    vec2 uv=v_viewPosition.xy/v_viewPosition.w*0.5+0.5;
-//    float currentDistance=v_viewPosition.z/v_viewPosition.w*0.5;
-//    float mapDistance=texture2D(shadowMap,uv).x*0.5+0.5;
-//    gl_FragColor=vec4(mapDistance);
-//    gl_FragColor=texture2D(shadowMap,gl_FragCoord.xy/vec2(800,600));
-//    vec4 color=texture2D(shadowMap,v_viewPosition.xy/v_viewPosition.w*0.5+0.5);
-//    gl_FragColor=color;
 }
