@@ -15,28 +15,20 @@ public class Simultaion implements Disposable {
     public Random random;
 
     public ArrayList<Particle> particles;
+    public ArrayList<FixedParticle> fixedParticles;
     public ArrayList<Stick> sticks;
     public float width,height;
     public float oldDelta=1f/60f/8f;
     public HashTable table;
-    public ExecutorService service;
-    private ArrayList<Future> futures;
-    private CollisionColumnThread[] threads;
-
     public Simultaion(float width,float height){
         this.width=width;
         this.height=height;
         random=new Random();
         renderer=new ShapeRenderer();
         particles=new ArrayList<>();
+        fixedParticles=new ArrayList<>();
         sticks=new ArrayList<>();
         table=new HashTable((int) width, (int) height,10);
-        service=Executors.newFixedThreadPool(16);
-        futures=new ArrayList<>();
-        threads=new CollisionColumnThread[table.cells.length];
-        for(int i=0;i<threads.length;i++){
-            threads[i]=new CollisionColumnThread(table.cells, i);
-        }
     }
     public void add(Particle p){
         particles.add(p);
@@ -44,14 +36,15 @@ public class Simultaion implements Disposable {
     public void add(Stick s){
         sticks.add(s);
     }
+    public void add(FixedParticle p){fixedParticles.add(p);}
     public void update(float delta,int subSteps){
         if(delta>0.05f)delta=0.05f;
         float subDelta=delta/subSteps;
         for(int i=0;i<subSteps;i++){
             stickConstraints();
+            //neki drugi collision listener
             collisionConstraintHashTable();
-//            collisionConstraint();
-//            collisionConstraintMultiColumn();
+            fixedConstraint();
             boxConstraint();
             applyForces();
             updateInertia(subDelta);
@@ -71,6 +64,13 @@ public class Simultaion implements Disposable {
                 gravity.x,
                 gravity.y
             );
+        }
+    }
+    public void fixedConstraint(){
+        for(FixedParticle fixedParticle:fixedParticles){
+            Particle particle=fixedParticle.particle;
+            particle.position.set(fixedParticle.position);
+            particle.prevPosition.set(fixedParticle.position);
         }
     }
     public void boxConstraint(){
@@ -133,7 +133,7 @@ public class Simultaion implements Disposable {
         }
     }
 
-    public void collisionConstraintSingleThread(){
+    public void collisionConstraintNSquared(){
         for(int i=0;i<particles.size();i++){
             Particle p1=particles.get(i);
             for(int j=0;j<particles.size();j++){
@@ -150,6 +150,9 @@ public class Simultaion implements Disposable {
         for(Particle p:particles){
             table.insert(p);
         }
+        for(FixedParticle fixedParticle:fixedParticles){
+            table.insert(fixedParticle.particle);
+        }
         for(int i=0;i<table.cells.length;i++){
             for(int j=0;j<table.cells[i].length;j++){
                 for(Particle p:table.cells[i][j]){
@@ -159,52 +162,6 @@ public class Simultaion implements Disposable {
         }
     }
 
-    public void collisionConstraint() {
-        table.removeAll();
-        for(Particle p:particles){
-            table.insert(p);
-        }
-        try{
-            for(int offset=0;offset<3;offset++){
-                for(int i=offset;i<table.cells.length;i+=3){
-                    futures.add(service.submit(threads[i]));
-                }
-                for(Future f:futures){
-                    f.get();
-                }
-                futures.clear();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
-    public void collisionConstraintMultiColumn(){
-        table.removeAll();
-        for(Particle p:particles){
-            table.insert(p);
-        }
-        try{
-            int columns=5;
-
-            for(int offset=0;offset<2;offset++){
-                for(int i=offset*columns;i<table.cells.length;i+=columns){
-                    int start=i;
-                    int end=i+columns;
-                    if(i+columns>=table.cells.length)end=table.cells.length-1;
-                    futures.add(service.submit(new MultiColumnCollisionThread(table.cells, start,end)));
-                }
-                for(Future f:futures){
-                    f.get();
-                }
-                futures.clear();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
     private void collideWithNearCells(Particle p1,int x,int y){
         for(int i=-1;i<=1;i++){
             for(int j=-1;j<=1;j++){
@@ -221,6 +178,7 @@ public class Simultaion implements Disposable {
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         drawParticles();
         drawSticks();
+        drawFixedParticles();
         renderer.end();
     }
 
@@ -229,21 +187,31 @@ public class Simultaion implements Disposable {
             particle.draw(renderer);
         }
     }
+
+    private void drawFixedParticles(){
+        for(FixedParticle fixedParticle:fixedParticles){
+            fixedParticle.particle.draw(renderer);
+        }
+    }
     private void drawSticks(){
         for(Stick stick:sticks){
             stick.draw(renderer);
         }
     }
 
+    public void resize(int width,int height){
+
+    }
+
     @Override
     public void dispose() {
-        service.shutdownNow();
-        try {
-            if(!service.awaitTermination(1,TimeUnit.MILLISECONDS)){
-                System.out.println("Error za brisanje threadova");
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        service.shutdownNow();
+//        try {
+//            if(!service.awaitTermination(1,TimeUnit.MILLISECONDS)){
+//                System.out.println("Error za brisanje threadova");
+//            }
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 }

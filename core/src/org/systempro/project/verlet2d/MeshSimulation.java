@@ -14,9 +14,33 @@ public class MeshSimulation extends BasicScreen {
     @Override
     public void show() {
         simultaion=new Simultaion(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        createBox(simultaion,100,3,1f,10,400,300);
+//        createBox(simultaion,100,3,1f,10,400,300);
+
+        float start=100,end=700;
+        float radius=5;
+        float y=300;
+        int n=(int)((end-start)/radius/2)-1;
+
+        FixedParticle p1=new FixedParticle(start,y,radius);
+        FixedParticle p2=new FixedParticle(end,y,radius);
+        simultaion.add(p1);
+        simultaion.add(p2);
+
+        Particle[] particles=new Particle[n];
+
+        for(int i=0;i<n;i++){
+            particles[i]=new Particle(start+(1+i)*2*radius,y,radius,0.9f,10);
+            simultaion.add(particles[i]);
+        }
+        for(int i=0;i<n-1;i++){
+            simultaion.add(new Stick(particles[i],particles[i+1],2*radius,1f));
+            simultaion.add(new Stick(particles[i],particles[i+1],2*radius,1f));
+        }
+        simultaion.add(new Stick(p1.particle,particles[0],2*radius,0.9f));
+        simultaion.add(new Stick(p2.particle,particles[n-1],2*radius,0.9f));
 
     }
+
 
     @Override
     public void render(float delta) {
@@ -25,8 +49,8 @@ public class MeshSimulation extends BasicScreen {
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
             createBox(simultaion,1,3,1f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
         }
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
-            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,100));
+        if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
+            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,10));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
