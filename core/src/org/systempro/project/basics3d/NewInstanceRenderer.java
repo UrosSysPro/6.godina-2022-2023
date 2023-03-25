@@ -28,12 +28,6 @@ public class NewInstanceRenderer {
         this.camera=camera;
         this.environment=environment;
         instanceData=new float[maxInstances*instanceSize];
-        mesh.enableInstancedRendering(true,maxInstances,
-            new VertexAttribute(Usage.Generic,4,"col0"),
-            new VertexAttribute(Usage.Generic,4,"col1"),
-            new VertexAttribute(Usage.Generic,4,"col2"),
-            new VertexAttribute(Usage.Generic,4,"col3")
-        );
         shadowMapRenderer=new ShadowMapRenderer(mesh);
     }
     public void draw(MeshInstance instance){

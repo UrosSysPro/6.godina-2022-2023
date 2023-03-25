@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.basics3d.Environment;
 import org.systempro.project.basics3d.Light;
 import org.systempro.project.basics3d.MeshInstance;
@@ -14,8 +15,9 @@ import org.systempro.project.basics3d.MeshInstance;
 public class ShadowMapRenderer {
 
     public Mesh mesh;
-    public ShaderProgram shader;
+    private ShaderProgram shader;
     public Camera camera;
+    public Vector3 direction;
     public float near=0.1f,far=15f;
     private int maxInstances=1000;
     private int instanceSize=16;
@@ -25,17 +27,13 @@ public class ShadowMapRenderer {
     public FrameBuffer buffer;
     public final int bufferWidth=1024,bufferHeight=1024;
 
+
     public ShadowMapRenderer(Mesh mesh){
         buffer=new FrameBuffer(Pixmap.Format.RGB888,bufferWidth,bufferHeight,true);
 
 //        this.mesh=mesh;
         this.mesh=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj")).meshes.first();
-        this.mesh.enableInstancedRendering(true,maxInstances,
-            new VertexAttribute(Usage.Generic,4,"col0"),
-            new VertexAttribute(Usage.Generic,4,"col1"),
-            new VertexAttribute(Usage.Generic,4,"col2"),
-            new VertexAttribute(Usage.Generic,4,"col3")
-        );
+        MeshInstance.enableInstancing(this.mesh,1000);
 
         camera=new OrthographicCamera(10,10);
         camera.position.set(5,10,5);

@@ -2,15 +2,19 @@ package org.systempro.project.snake3d;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Mesh;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import org.systempro.project.basics3d.InstanceRenderer;
 import org.systempro.project.basics3d.MeshInstance;
 
 import java.util.ArrayList;
 
 public class Snake {
-    private ArrayList<SnakePart> parts;
+    private final ArrayList<SnakePart> parts;
     private int smerX,smerY;
     public InstanceRenderer renderer;
+
 
     int width=50;
     int height=50;
@@ -18,10 +22,13 @@ public class Snake {
     public boolean gameOver=false;
 
     public Snake(){
-        renderer=InstanceRenderer.createInstanceRenderer();
-        renderer.controller.setDirection((float) -(Math.PI/2),0);
-        Gdx.input.setInputProcessor(null);
+        Mesh mesh=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj")).meshes.first();
+        MeshInstance.enableInstancing(mesh,1000);
+        Texture texture=new Texture("test3d/texture.png");
+        renderer=new InstanceRenderer(mesh,texture);
         renderer.camera.position.set(0,0,10);
+        renderer.camera.update();
+        renderer.camera.lookAt(0,0,0);
         renderer.camera.update();
         parts=new ArrayList<>();
         add(0,0);

@@ -47,7 +47,7 @@ public class MeshSimulation extends BasicScreen {
         ScreenUtils.clear(0,0,0,1);
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-            createBox(simultaion,1,3,1f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
+            createBox(simultaion,1,5,1.5f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
         }
         if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
             simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,10));
@@ -55,7 +55,7 @@ public class MeshSimulation extends BasicScreen {
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
 
-        if(!paused)simultaion.update(delta,8);
+        if(!paused)simultaion.update(0.016f,8);
         simultaion.draw();
     }
 
@@ -74,7 +74,7 @@ public class MeshSimulation extends BasicScreen {
         for(int i=0;i<particles.length;i++){
             for(int j=0;j<particles[i].length;j++){
                 Stick stick;
-                float stiffness=0.5f;
+                float stiffness=1f;
                 if(i+1<particles.length&&j+1<particles[i].length){
                     stick=new Stick(particles[i][j],particles[i+1][j+1],r*(float) Math.sqrt(2)*d*2,stiffness);
                     simultaion.sticks.add(stick);
@@ -92,6 +92,12 @@ public class MeshSimulation extends BasicScreen {
             }
         }
     }
+
+    @Override
+    public void resize(int width, int height) {
+        simultaion.resize(width,height,20);
+    }
+
     @Override
     public void hide() {
         simultaion.dispose();

@@ -21,7 +21,6 @@ public class InstanceRenderer {
     public int instanceSize=16;
     public int instancesToRender=0;
     public float[] instanceData;
-    public static CameraController controller;
 
     public InstanceRenderer(Mesh mesh,ShaderProgram shader,Camera camera,Texture texture,Environment environment){
         this.texture=texture;
@@ -30,12 +29,48 @@ public class InstanceRenderer {
         this.camera=camera;
         this.environment=environment;
         instanceData=new float[maxInstances*instanceSize];
-        mesh.enableInstancedRendering(true,maxInstances,
-            new VertexAttribute(Usage.Generic,4,"col0"),
-            new VertexAttribute(Usage.Generic,4,"col1"),
-            new VertexAttribute(Usage.Generic,4,"col2"),
-            new VertexAttribute(Usage.Generic,4,"col3")
+//        mesh.enableInstancedRendering(true,maxInstances,
+//            new VertexAttribute(Usage.Generic,4,"col0"),
+//            new VertexAttribute(Usage.Generic,4,"col1"),
+//            new VertexAttribute(Usage.Generic,4,"col2"),
+//            new VertexAttribute(Usage.Generic,4,"col3")
+//        );
+    }
+    public InstanceRenderer(Mesh mesh,Texture texture,Environment environment){
+        this(mesh,null,null,texture,environment);
+        defaultShader();
+        defaultCamera();
+    }
+    public InstanceRenderer(Mesh mesh,ShaderProgram shader,Camera camera,Texture texture){
+        this(mesh,shader,camera,texture,null);
+        defaultEnvironment();
+    }
+    public InstanceRenderer(Mesh mesh,Camera camera,Texture texture){
+        this(mesh,null,camera,texture);
+        defaultShader();
+    }
+    public InstanceRenderer(Mesh mesh,Texture texture){
+        this(mesh,null,texture);
+        defaultCamera();
+    }
+    public InstanceRenderer defaultCamera(){
+        camera=new PerspectiveCamera(60,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        camera.near=0.1f;
+        camera.far=100f;
+        camera.update();
+        return this;
+    }
+    public InstanceRenderer defaultShader(){
+        shader=new ShaderProgram(
+            Gdx.files.internal("phongShader/vertex.glsl").readString(),
+            Gdx.files.internal("phongShader/fragment.glsl").readString()
         );
+        return this;
+    }
+    public InstanceRenderer defaultEnvironment(){
+        environment=new Environment();
+        environment.ambientColor.set(1,1,1,1);
+        return this;
     }
     public void draw(MeshInstance instance){
         if(instancesToRender>=maxInstances)flush();
@@ -75,43 +110,51 @@ public class InstanceRenderer {
         mesh.render(shader, GL20.GL_TRIANGLES);
         instancesToRender=0;
     }
-
-    public static InstanceRenderer createInstanceRenderer(){
-        Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
-        Mesh mesh=model.meshes.first();
-
-        Texture texture=new Texture("test3d/texture.png");
-
-        float width=Gdx.graphics.getWidth();
-        float height=Gdx.graphics.getHeight();
-        Camera camera=new PerspectiveCamera(60,width,height);
-        camera.position.set(0,0,0);
-        camera.near=0.1f;
-        camera.far=100;
-        camera.update();
-
-        controller=new CameraController(camera);
-        Gdx.input.setInputProcessor(controller);
-
-        Environment environment=new Environment();
-        environment.ambientColor.set(1,1,1,1);
-//        environment.ambientColor.set(0.1f,0.1f,0.1f,1);
-//
-//        Light light=new Light();
-//        light.position.set(0,3,0);
-//        light.color.set(Color.WHITE);
-//
-//        environment.add(light);
-
-        ShaderProgram.pedantic=false;
-        String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();
-        String fragment=Gdx.files.internal("phongShader/fragment.glsl").readString();
-        ShaderProgram shader=new ShaderProgram(vertex,fragment);
-        if(!shader.isCompiled()){
-            System.out.println(shader.getLog());
-        }
-
-        return new InstanceRenderer(mesh,shader,camera,texture,environment);
+    public void clearScreen(float r,float g,float b,float a){
+        Gdx.gl20.glClearColor(0,0,0,1);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
     }
+    public void enableDepthAndCulling(){
+        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
+    }
+
+//    public static InstanceRenderer createInstanceRenderer(){
+//        Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
+//        Mesh mesh=model.meshes.first();
+//
+//        Texture texture=new Texture("test3d/texture.png");
+//
+//        float width=Gdx.graphics.getWidth();
+//        float height=Gdx.graphics.getHeight();
+//        Camera camera=new PerspectiveCamera(60,width,height);
+//        camera.position.set(0,0,0);
+//        camera.near=0.1f;
+//        camera.far=100;
+//        camera.update();
+//
+//        controller=new CameraController(camera);
+//        Gdx.input.setInputProcessor(controller);
+//
+//        Environment environment=new Environment();
+//        environment.ambientColor.set(1,1,1,1);
+////        environment.ambientColor.set(0.1f,0.1f,0.1f,1);
+////
+////        Light light=new Light();
+////        light.position.set(0,3,0);
+////        light.color.set(Color.WHITE);
+////
+////        environment.add(light);
+//
+//        ShaderProgram.pedantic=false;
+//        String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();
+//        String fragment=Gdx.files.internal("phongShader/fragment.glsl").readString();
+//        ShaderProgram shader=new ShaderProgram(vertex,fragment);
+//        if(!shader.isCompiled()){
+//            System.out.println(shader.getLog());
+//        }
+//
+//        return new InstanceRenderer(mesh,shader,camera,texture,environment);
+//    }
 
 }

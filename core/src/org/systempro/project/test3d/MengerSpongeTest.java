@@ -11,9 +11,7 @@ import org.systempro.project.BasicScreen;
 import org.systempro.project.basics3d.*;
 
 public class MengerSpongeTest extends BasicScreen {
-    ShaderProgram shader;
     Mesh mesh,carMesh;
-    Camera camera;
     Texture texture,carTexture;
     CameraController controller;
     Environment environment;
@@ -26,26 +24,7 @@ public class MengerSpongeTest extends BasicScreen {
     float time=0;
 
 
-    public void shaderSetup(){
-        ShaderProgram.pedantic=false;
-        String vertex=Gdx.files.internal("phongShader/vertex.glsl").readString();
-        String fragment=Gdx.files.internal("phongShader/fragment.glsl").readString();
-        shader=new ShaderProgram(vertex,fragment);
-        if(!shader.isCompiled()){
-            System.out.println(shader.getLog());
-        }
-    }
-    public void cameraSetup(){
-        float width=Gdx.graphics.getWidth();
-        float height=Gdx.graphics.getHeight();
-        camera=new PerspectiveCamera(70,width,height);
-        camera.near=0.1f;
-        camera.far=100;
-        camera.position.set(1,0,1);
-        camera.lookAt(0,0,0);
-        camera.update();
-        controller=new CameraController(camera);
-    }
+
     public void cubeSetup(int n){
         instances=new MeshInstance[n][n][n];
         for(int i=0;i<n;i++){
@@ -99,19 +78,23 @@ public class MengerSpongeTest extends BasicScreen {
         carTexture=new Texture("test3d/auto.png");
         Model model = new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
         mesh = model.meshes.first();
+        MeshInstance.enableInstancing(mesh,1000);
         Model autoModel = new ObjLoader().loadModel(Gdx.files.internal("test3d/auto.obj"));
         carMesh = autoModel.meshes.first();
-        shaderSetup();
-        cameraSetup();
+        MeshInstance.enableInstancing(carMesh,1000);
         environmentSetup();
         cubeSetup(9);
-        carRenderer=new InstanceRenderer(carMesh,shader,camera,carTexture,environment);
-        renderer=new InstanceRenderer(mesh,shader,camera,texture,environment);
+        carRenderer=new InstanceRenderer(carMesh,null,null,carTexture,environment).defaultCamera().defaultShader();
+        renderer=new InstanceRenderer(mesh,null,null,texture,environment);
+        renderer.camera= carRenderer.camera;
+        renderer.shader=carRenderer.shader;
 
         carInstance=new MeshInstance();
         carInstance.position.set(4.5f,4.5f,4.5f);
         carInstance.update();
 
+        controller=new CameraController(renderer.camera);
+        controller.update(0.016f);
         MengerSpongeUI.init(controller);
         Gdx.input.setInputProcessor(new InputMultiplexer(
             MengerSpongeUI.scene().inputProcessor(),
@@ -160,8 +143,8 @@ public class MengerSpongeTest extends BasicScreen {
 
     @Override
     public void resize(int width, int height) {
-        camera.viewportWidth=width;
-        camera.viewportHeight=height;
+        renderer.camera.viewportWidth=width;
+        renderer.camera.viewportHeight=height;
         MengerSpongeUI.scene().resize(width,height);
         MengerSpongeUI.scene().layout();
     }

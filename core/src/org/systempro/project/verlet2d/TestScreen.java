@@ -29,53 +29,12 @@ public class TestScreen extends BasicScreen {
         ScreenUtils.clear(0,0,0,1);
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
 
-//        float x= Gdx.input.getX();
-//        float y=Gdx.graphics.getHeight()-Gdx.input.getY();
-//        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT))
-//            simultaion.add(x,y);
-//
-//        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-//            for(Particle particle: simultaion.particles){
-//                particle.acceleration.add(Gdx.input.getDeltaX()*100,-Gdx.input.getDeltaY()*600);
-//            }
-//        }
-//
-//        if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT))
-//            simultaion.addBox(x,y);
-
-        if(Gdx.input.isKeyJustPressed(Input.Keys.W)){
-            for(Particle p:simultaion.particles){
-                p.restitution+=0.05;
-            }
-        }
-        if(Gdx.input.isKeyJustPressed(Input.Keys.S)){
-            for(Particle p:simultaion.particles){
-                p.restitution-=0.05;
-            }
-        }
-
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-            float x=Gdx.input.getX();
-            float y=Gdx.graphics.getHeight()-Gdx.input.getY();
-            int n=3;
-            int r=6;
-            for(int i=-n;i<=n;i++){
-                for(int j=-n;j<=n;j++){
-                    Particle p=new Particle(x+i*r,y+j*r,x+i*r,y+j*r,1);
-                    simultaion.particles.add(p);
-                }
-            }
-        }
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
-            float x=Gdx.input.getX();
-            float y=Gdx.graphics.getHeight()-Gdx.input.getY();
-            Particle p=new Particle(x,y,x,y-1,1);
-            simultaion.particles.add(p);
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+            createBox(simultaion,1,5,1,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
         }
 
         long start=System.currentTimeMillis();
-        if(!paused)
-            simultaion.update(delta,20);
+        if(!paused)simultaion.update(delta,8);
         long physics=System.currentTimeMillis();
         simultaion.draw();
         long draw=System.currentTimeMillis();
@@ -89,7 +48,45 @@ public class TestScreen extends BasicScreen {
         scene.draw();
         long ui=System.currentTimeMillis();
         TestScreenUI.ui().widget().text_$eq("ui: "+(ui-draw));
+    }
 
+    public void createBox(Simultaion simultaion,float mass,float r,float d,int n,float offsetX,float offsetY){
+        Particle[][] particles=new Particle[n][n];
+        for(int i=0;i<particles.length;i++){
+            for(int j=0;j<particles[i].length;j++){
+                float x=offsetX+i*r*2*d;
+                float y=offsetY+j*r*2*d;
+                Particle p=new Particle(x,y,r,0.5f,mass);
+                simultaion.particles.add(p);
+                particles[i][j]=p;
+            }
+        }
+
+        for(int i=0;i<particles.length;i++){
+            for(int j=0;j<particles[i].length;j++){
+                Stick stick;
+                float stiffness=1f;
+                if(i+1<particles.length&&j+1<particles[i].length){
+                    stick=new Stick(particles[i][j],particles[i+1][j+1],r*(float) Math.sqrt(2)*d*2,stiffness);
+                    simultaion.sticks.add(stick);
+                    stick=new Stick(particles[i+1][j],particles[i][j+1],r*(float) Math.sqrt(2)*d*2,stiffness);
+                    simultaion.sticks.add(stick);
+                }
+                if(j+1<particles[i].length){
+                    stick=new Stick(particles[i][j],particles[i][j+1],r*d*2,stiffness);
+                    simultaion.sticks.add(stick);
+                }
+                if(i+1<particles.length){
+                    stick=new Stick(particles[i][j],particles[i+1][j],r*d*2,stiffness);
+                    simultaion.sticks.add(stick);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        simultaion.resize(width,height,20);
     }
     @Override
     public void hide() {

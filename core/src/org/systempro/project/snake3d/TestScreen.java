@@ -25,7 +25,7 @@ public class TestScreen extends BasicScreen {
 
         counter++;
 
-        snake.renderer.controller.update(delta);
+//        snake.renderer.controller.update(delta);
         snake.input();
         if(counter%maxFrames==0){
             snake.update();

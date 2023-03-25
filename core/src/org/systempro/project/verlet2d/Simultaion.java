@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import org.systempro.project.camera.Camera2d;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -13,13 +14,18 @@ public class Simultaion implements Disposable {
 
     public ShapeRenderer renderer;
     public Random random;
-
     public ArrayList<Particle> particles;
     public ArrayList<FixedParticle> fixedParticles;
     public ArrayList<Stick> sticks;
     public float width,height;
     public float oldDelta=1f/60f/8f;
     public HashTable table;
+    public Camera2d camera2d;
+
+    //deo za menjanje
+    public ExecutorService service;
+    public Future<Void>[] futures;
+
     public Simultaion(float width,float height){
         this.width=width;
         this.height=height;
@@ -29,6 +35,11 @@ public class Simultaion implements Disposable {
         fixedParticles=new ArrayList<>();
         sticks=new ArrayList<>();
         table=new HashTable((int) width, (int) height,10);
+        camera2d=new Camera2d();
+        camera2d.setPosition(width/2,height/2);
+        camera2d.setSize(width,height);
+        camera2d.update();
+        renderer.setProjectionMatrix(camera2d.combined4);
     }
     public void add(Particle p){
         particles.add(p);
@@ -199,19 +210,18 @@ public class Simultaion implements Disposable {
         }
     }
 
-    public void resize(int width,int height){
-
+    public void resize(int width,int height,int cellSize) {
+        this.width=width;
+        this.height=height;
+        table=new HashTable(width,height,cellSize);
+        camera2d.setPosition(width/2,height/2);
+        camera2d.setSize(width,height);
+        camera2d.update();
+        renderer.setProjectionMatrix(camera2d.combined4);
     }
 
     @Override
     public void dispose() {
-//        service.shutdownNow();
-//        try {
-//            if(!service.awaitTermination(1,TimeUnit.MILLISECONDS)){
-//                System.out.println("Error za brisanje threadova");
-//            }
-//        } catch (InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+
     }
 }

@@ -27,6 +27,7 @@ public class TestScreen extends BasicScreen {
         //mesh
         Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
         mesh=model.meshes.first();
+        MeshInstance.enableInstancing(mesh,1000);
 
         instances=new MeshInstance[26];
         for(int index=0;index<25;index++){
