@@ -7,27 +7,28 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.basics3d.*;
 import org.systempro.project.renderers.TextureRenderer;
 
 public class TestScreen extends BasicScreen {
-
-    Mesh mesh;
     MeshInstance[] instances;
     CameraController controller;
-
     NewInstanceRenderer renderer;
-
-    ShaderProgram shader;
-    Camera camera;
+    public Vector3 point=new Vector3(0,0,0);
     @Override
     public void show() {
 
         //mesh
         Model model=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
-        mesh=model.meshes.first();
+        Mesh mesh=model.meshes.first();
         MeshInstance.enableInstancing(mesh,1000);
+
+        Model shadowModel=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj"));
+        Mesh shadowMesh=shadowModel.meshes.first();
+        MeshInstance.enableInstancing(shadowMesh,1000);
+
 
         instances=new MeshInstance[26];
         for(int index=0;index<25;index++){
@@ -44,43 +45,33 @@ public class TestScreen extends BasicScreen {
         instances[25]=instance;
         instance.update();
 
-        String vertex=Gdx.files.internal("newInstanceRenderer/vertex.glsl").readString();
-        String fragment=Gdx.files.internal("newInstanceRenderer/fragment.glsl").readString();
-        ShaderProgram.pedantic=false;
-        shader=new ShaderProgram(vertex,fragment);
-        if(!shader.isCompiled()){
-            System.out.println(shader.getLog());
-        }
-
-        camera=new PerspectiveCamera(60,800,600);
-        camera.near=0.1f;
-        camera.far=100f;
-        camera.update();
-        controller=new CameraController(camera);
-        Gdx.input.setInputProcessor(controller);
         Texture texture=new Texture("test3d/texture.png");
-        Environment environment=new Environment();
+
+        ShaderProgram.pedantic=false;
+        renderer=new NewInstanceRenderer(mesh,null,null,texture,null)
+            .defaultCamera()
+            .defaultEnvironment()
+            .defaultShader();
+        renderer.shadowMapRenderer.setMesh(shadowMesh);
+
         Light light=new Light();
         light.position.set(0,3,0);
         light.color.set(Color.WHITE);
         light.attenuation.set(0,0,1.5f);
-        environment.ambientColor.set(0.1f,0.1f,0.1f,1f);
-        environment.add(light);
-        renderer=new NewInstanceRenderer(mesh,shader,camera,texture,environment);
+        renderer.environment.add(light);
+        renderer.environment.ambientColor.set(.1f,.1f,.1f,1);
+
+        controller=new CameraController(renderer.camera);
+        Gdx.input.setInputProcessor(controller);
     }
 
     @Override
     public void render(float delta) {
-
-
         controller.update(delta);
-        Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        Gdx.gl20.glClearColor(0,0,0,1);
+
+        renderer.clearScreen(0,0,0,1);
+        renderer.enableDepthAndCulling();
         Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
-        Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
-        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
-
-
 
         for(MeshInstance instance:instances){
             instance.update();
@@ -88,12 +79,15 @@ public class TestScreen extends BasicScreen {
         }
         renderer.flush();
 
-        if(Gdx.input.isKeyPressed(Input.Keys.Z)){
+//        if(Gdx.input.isKeyPressed(Input.Keys.Z)){
+//        if(Gdx.input.isKeyPressed(Input.Keys.LEFT))point.x+=1;
+//        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT))point.x-=1;
+        renderer.shadowMapRenderer.lookAt(point);
             for(MeshInstance instance : instances){
                 instance.update();
                 renderer.shadowMapRenderer.draw(instance);
             }
             renderer.shadowMapRenderer.flush();
-        }
+//        }
     }
 }

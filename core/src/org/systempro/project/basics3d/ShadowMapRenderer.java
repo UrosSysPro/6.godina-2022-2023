@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.basics3d.Environment;
 import org.systempro.project.basics3d.Light;
@@ -14,34 +15,30 @@ import org.systempro.project.basics3d.MeshInstance;
 
 public class ShadowMapRenderer {
 
-    public Mesh mesh;
+    private Mesh mesh;
     private ShaderProgram shader;
-    public Camera camera;
-    public Vector3 direction;
+    private Camera camera;
+    private Vector3 direction;
     public float near=0.1f,far=15f;
     private int maxInstances=1000;
     private int instanceSize=16;
     private int instancesToRender=0;
     private float[] instanceData;
 
-    public FrameBuffer buffer;
-    public final int bufferWidth=1024,bufferHeight=1024;
+    private FrameBuffer buffer;
+    private final int bufferWidth=1024,bufferHeight=1024;
 
-
-    public ShadowMapRenderer(Mesh mesh){
+    public ShadowMapRenderer(){
         buffer=new FrameBuffer(Pixmap.Format.RGB888,bufferWidth,bufferHeight,true);
 
-//        this.mesh=mesh;
-        this.mesh=new ObjLoader().loadModel(Gdx.files.internal("test3d/kocka.obj")).meshes.first();
-        MeshInstance.enableInstancing(this.mesh,1000);
-
         camera=new OrthographicCamera(10,10);
-        camera.position.set(5,10,5);
-        camera.lookAt(0,0,0);
+        camera.position.set(0,0,0);
         camera.near=near;
         camera.far=far;
 
         camera.update();
+
+        direction=new Vector3();
 
         ShaderProgram.pedantic=false;
         String vertex= Gdx.files.internal("shadowMap/vertex.glsl").readString();
@@ -85,4 +82,47 @@ public class ShadowMapRenderer {
         Gdx.gl20.glCullFace(GL20.GL_BACK);
     }
 
+    public Matrix4 getViewMatrix(){
+        return camera.view;
+    }
+    public Matrix4 getProjectionMatrix(){
+        return camera.projection;
+    }
+    public Texture getTexture(){
+        return buffer.getColorBufferTexture();
+    }
+
+    public Vector3 getDirection() {
+        return direction;
+    }
+
+    public ShadowMapRenderer setDirection(Vector3 direction) {
+        camera.up.set(0,1,0);
+        camera.update();
+        camera.lookAt(new Vector3(camera.position).add(direction));
+        camera.update();
+        direction.set(direction).nor();
+        return this;
+    }
+    public ShadowMapRenderer lookAt(Vector3 point) {
+        camera.up.set(0,1,0);
+        camera.update();
+        camera.lookAt(point);
+        camera.update();
+        direction.set(point.sub(camera.position)).nor();
+        return this;
+    }
+    public ShadowMapRenderer setPostion(Vector3 position){
+        camera.up.set(0,1,0);
+        camera.update();
+        camera.position.set(position);
+        camera.lookAt(position.add(direction));
+        camera.update();
+        return this;
+    }
+
+    public ShadowMapRenderer setMesh(Mesh mesh) {
+        this.mesh = mesh;
+        return this;
+    }
 }

@@ -1,8 +1,10 @@
 package org.systempro.project.basics3d;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 import org.systempro.project.basics3d.Environment;
 import org.systempro.project.basics3d.Light;
 import org.systempro.project.basics3d.MeshInstance;
@@ -28,7 +30,29 @@ public class NewInstanceRenderer {
         this.camera=camera;
         this.environment=environment;
         instanceData=new float[maxInstances*instanceSize];
-        shadowMapRenderer=new ShadowMapRenderer(mesh);
+        shadowMapRenderer=new ShadowMapRenderer()
+            .setPostion(new Vector3(5,10,5))
+            .setDirection(new Vector3( -5,-10,-5));
+    }
+
+    public NewInstanceRenderer defaultCamera(){
+        camera=new PerspectiveCamera(60, Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        camera.near=0.1f;
+        camera.far=100f;
+        camera.update();
+        return this;
+    }
+    public NewInstanceRenderer defaultShader(){
+        shader=new ShaderProgram(
+            Gdx.files.internal("newInstanceRenderer/vertex.glsl").readString(),
+            Gdx.files.internal("newInstanceRenderer/fragment.glsl").readString()
+        );
+        return this;
+    }
+    public NewInstanceRenderer defaultEnvironment(){
+        environment=new Environment();
+        environment.ambientColor.set(1,1,1,1);
+        return this;
     }
     public void draw(MeshInstance instance){
         if(instancesToRender>=maxInstances)flush();
@@ -64,14 +88,23 @@ public class NewInstanceRenderer {
             environment.ambientColor.b
         );
         //shadow map
-        shader.setUniformMatrix("shadowView",shadowMapRenderer.camera.view);
-        shader.setUniformMatrix("shadowProjection",shadowMapRenderer.camera.projection);
-        shadowMapRenderer.buffer.getColorBufferTexture().bind(1);
+        shader.setUniformMatrix("shadowView",shadowMapRenderer.getViewMatrix());
+        shader.setUniformMatrix("shadowProjection",shadowMapRenderer.getProjectionMatrix());
+        shadowMapRenderer.getTexture().bind(1);
         shader.setUniformi("shadowMap",1);
         //mseh render
         mesh.setInstanceData(instanceData,0,instancesToRender*instanceSize);
         mesh.render(shader, GL20.GL_TRIANGLES);
         instancesToRender=0;
+    }
+
+    public void clearScreen(float r,float g,float b,float a){
+        Gdx.gl20.glClearColor(0,0,0,1);
+        Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT|GL20.GL_DEPTH_BUFFER_BIT);
+    }
+    public void enableDepthAndCulling(){
+        Gdx.gl20.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl20.glEnable(GL20.GL_CULL_FACE);
     }
 
 }
