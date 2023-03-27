@@ -15,7 +15,7 @@ public class NormalMappingInstanceRenderer {
     public Mesh mesh;
     public ShaderProgram shader;
     public Camera camera;
-    public Texture texture,normalMap;
+    public Texture texture,normalMap,roughnessMap;
 
     public Environment environment;
     public int maxInstances=1000;
@@ -93,6 +93,8 @@ public class NormalMappingInstanceRenderer {
         shader.setUniformi("texture0",0);
         normalMap.bind(1);
         shader.setUniformi("normalMap",1);
+        roughnessMap.bind(2);
+        shader.setUniformi("roughnessMap",2);
         //camera
         shader.setUniformMatrix("view",camera.view);
         shader.setUniformMatrix("projection",camera.projection);

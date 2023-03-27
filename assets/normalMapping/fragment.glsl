@@ -5,6 +5,7 @@ varying vec4 v_tangent;
 
 uniform sampler2D texture0;
 uniform sampler2D normalMap;
+uniform sampler2D roughnessMap;
 uniform vec3 cameraPosition;
 
 
@@ -44,8 +45,11 @@ vec4 totalLighting(){
     vec3 T=normalize(v_tangent.xyz);
     vec3 B=cross(N,T);
     mat3 TBN=mat3(T,B,N);
-    vec3 normal=texture2D(normalMap,v_texCoord0).xyz*2.0-1.0;
-    normal=TBN*normal;
+    vec2 texCoord=v_texCoord0;
+    texCoord.y=1.0-texCoord.y;
+    vec3 normal=texture2D(normalMap,texCoord).xyz*2.0-1.0;
+    normal=normalize(TBN*normal);
+//    normal=v_normal;
 
     vec3 ambient=ambientColor;
     vec3 diffuse=vec3(0.0);
@@ -58,7 +62,8 @@ vec4 totalLighting(){
         diffuse+=d;
         specular+=s;
     }
-    return vec4(ambient,1.0)+vec4(specular,1.0)+vec4(diffuse,1.0);
+    float roughness=1.0-texture2D(roughnessMap,texCoord).x;
+    return vec4(ambient,1.0)+(vec4(specular,1.0)+vec4(diffuse,1.0))*roughness;
 }
 
 
@@ -68,6 +73,15 @@ void main(){
     vec4 baseColor=texture2D(texture0,texCoord);
 
     gl_FragColor=totalLighting()*baseColor;
+
+
+//    vec3 N=normalize(v_normal);
+//    vec3 T=normalize(v_tangent.xyz);
+//    vec3 B=cross(N,T);
+//    mat3 TBN=mat3(T,B,N);
+//    vec3 normal=texture2D(normalMap,v_texCoord0).xyz*2.0-1.0;
+//    normal=TBN*normal;
+//    gl_FragColor=vec4(abs(normal),1.0);
 //    gl_FragColor=abs(vec4(B,1.0));
 //    gl_FragColor=baseColor;
 }

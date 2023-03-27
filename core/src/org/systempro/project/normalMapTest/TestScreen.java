@@ -1,6 +1,7 @@
 package org.systempro.project.normalMapTest;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
@@ -25,13 +26,15 @@ public class TestScreen extends BasicScreen {
             System.out.println(attribute.numComponents+" "+attribute.alias);
         }
 
-        Texture texture=new Texture("normalMapping/diffuse.png");
-        Texture normalMap=new Texture("normalMapping/normal.png");
+        Texture texture=new Texture("normalMapping/diffuse_metal.jpg");
+        Texture normalMap=new Texture("normalMapping/normal_metal.jpg");
+        Texture roughnessMap=new Texture("normalMapping/rough_metal.jpg");
 
         renderer=new NormalMappingInstanceRenderer(mesh,texture).defaultShader().defaultCamera().defaultEnvironment();
         renderer.normalMap=normalMap;
+        renderer.roughnessMap=roughnessMap;
         Light light=new Light();
-        light.attenuation.set(0,0,2);
+        light.attenuation.set(0,0,1);
         light.position.set(3,3,3);
         renderer.environment.add(light);
         renderer.environment.ambientColor.set(0.1f,0.1f,0.1f,1.0f);
@@ -46,12 +49,16 @@ public class TestScreen extends BasicScreen {
     public void render(float delta) {
         controller.update(delta);
 
-        angle+=0.03;
-//        renderer.environment.lights[0].position.set((float) Math.sin(angle)*3,3,(float) Math.cos(angle)*3);
+        if(Gdx.input.isKeyPressed(Input.Keys.NUM_1))
+            angle+=0.02;
+        if(Gdx.input.isKeyPressed(Input.Keys.NUM_2))
+            angle-=0.02;
+//        angle+=0.03f;
+        renderer.environment.lights[0].position.set((float) Math.sin(angle)*3,3,(float) Math.cos(angle)*3);
 
 
-        instance.rotation.setEulerAnglesRad(angle,0,0);
-        instance.update();
+//        instance.rotation.setEulerAnglesRad(angle,0,0);
+//        instance.update();
 
         renderer.clearScreen(0,0,0,1);
         renderer.enableDepthAndCulling();
