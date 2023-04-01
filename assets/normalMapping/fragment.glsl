@@ -63,7 +63,7 @@ vec4 totalLighting(){
         specular+=s;
     }
     float roughness=1.0-texture2D(roughnessMap,texCoord).x;
-    return vec4(ambient,1.0)+(vec4(specular,1.0)+vec4(diffuse,1.0))*roughness;
+    return vec4(ambient,1.0)+vec4(specular,1.0)*roughness+vec4(diffuse,1.0);
 }
 
 

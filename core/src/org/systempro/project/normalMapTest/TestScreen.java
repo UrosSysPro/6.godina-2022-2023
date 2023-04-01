@@ -33,10 +33,27 @@ public class TestScreen extends BasicScreen {
         renderer=new NormalMappingInstanceRenderer(mesh,texture).defaultShader().defaultCamera().defaultEnvironment();
         renderer.normalMap=normalMap;
         renderer.roughnessMap=roughnessMap;
+
+//        for(int i=0;i<2;i++){
+//            for(int j=0;j<2;j++){
+//                for(int k=0;k<2;k++){
+//                    Light light=new Light();
+//                    float a=0.2f;
+//                    light.color.set(a,a,a,1.0f);
+//                    light.attenuation.set(0,0,1);
+//                    light.position.set(-3+i*6,-3+j*6,-3+k*6);
+//                    renderer.environment.add(light);
+//                }
+//            }
+//        }
+
         Light light=new Light();
+        float a=1f;
+        light.color.set(a,a,a,1.0f);
         light.attenuation.set(0,0,1);
-        light.position.set(3,3,3);
+        light.position.set(2,2,2);
         renderer.environment.add(light);
+
         renderer.environment.ambientColor.set(0.1f,0.1f,0.1f,1.0f);
 
         controller=new CameraController(renderer.camera);
