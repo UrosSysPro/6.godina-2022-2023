@@ -1,3 +1,5 @@
+
+
 buildscript {
     
 
@@ -15,6 +17,10 @@ buildscript {
     }
 }
 
+plugins{
+    id 'scala'
+}
+
 allprojects {
     apply plugin: "eclipse"
 
@@ -27,6 +33,7 @@ allprojects {
         ashleyVersion = '1.7.4'
         aiVersion = '1.8.2'
         gdxControllersVersion = '2.2.1'
+        scalaVersion='2.11.12'
     }
 
     repositories {
@@ -42,7 +49,6 @@ allprojects {
 
 project(":desktop") {
     apply plugin: "java-library"
-
 
     dependencies {
         implementation project(":core")
@@ -87,6 +93,7 @@ project(":android") {
     }
 }
 
+
 project(":core") {
     apply plugin: "java-library"
     apply plugin: "scala"
@@ -100,7 +107,6 @@ project(":core") {
         api "com.kotcrab.vis:vis-ui:1.4.11"
         api "org.scala-lang:scala-library:2.11.12"
         api "com.github.mgsx-dev.gdx-gltf:gltf:2.1.0"
-//        api 'com.neovisionaries:nv-websocket-client:2.14'
         api "org.java-websocket:Java-WebSocket:1.5.3"
         api "org.slf4j:slf4j-simple:1.6.1"
     }
