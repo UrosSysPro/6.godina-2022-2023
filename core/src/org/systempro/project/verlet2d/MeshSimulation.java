@@ -47,7 +47,7 @@ public class MeshSimulation extends BasicScreen {
         ScreenUtils.clear(0,0,0,1);
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-            createBox(simultaion,1,5,1.5f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
+            createBox(simultaion,1,5,1.9f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
         }
         if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
             simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,10));

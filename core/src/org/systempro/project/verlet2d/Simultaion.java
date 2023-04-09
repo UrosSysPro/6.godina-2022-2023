@@ -54,7 +54,7 @@ public class Simultaion implements Disposable {
         for(int i=0;i<subSteps;i++){
             stickConstraints();
             //neki drugi collision listener
-            collisionConstraintHashTable();
+//            collisionConstraintHashTable();
             fixedConstraint();
             boxConstraint();
             applyForces();
@@ -142,6 +142,10 @@ public class Simultaion implements Disposable {
         for(Stick stick:sticks){
             stick.apply();
         }
+    }
+
+    public void collisionContraintParallel(){
+
     }
 
     public void collisionConstraintNSquared(){

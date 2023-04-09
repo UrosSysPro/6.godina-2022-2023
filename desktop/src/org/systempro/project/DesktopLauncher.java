@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("VI-godina-2022/23");
 		config.setWindowedMode(800,600);
-		config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30,3,0);
+		config.setOpenGLEmulation(Lwjgl3ApplicationConfiguration.GLEmulation.GL30,3,3);
 		new Lwjgl3Application(new Main(), config);
 	}
 }
