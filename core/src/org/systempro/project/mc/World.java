@@ -4,10 +4,11 @@ public class World {
     private Chunk[][] chunks;
 
     public World(){
+        PerlinNoise2d noise2d=new PerlinNoise2d();
         chunks=new Chunk[5][5];
         for(int i=0;i<chunks.length;i++){
             for(int j=0;j<chunks[i].length;j++){
-                chunks[i][j]=new Chunk();
+                chunks[i][j]=new Chunk(i,j,noise2d);
             }
         }
     }
