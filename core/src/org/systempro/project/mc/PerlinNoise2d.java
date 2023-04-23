@@ -61,6 +61,8 @@ public class PerlinNoise2d {
         ix1 = interpolate(n0, n1, sx);
 
         value = interpolate(ix0, ix1, sy);
+        value=value*0.5f+0.5f;
+        value=3*value*value-2*value*value*value;
         return value; // Will return in range -1 to 1. To make it in range 0 to 1, multiply by 0.5 and add 0.5
     }
 }
