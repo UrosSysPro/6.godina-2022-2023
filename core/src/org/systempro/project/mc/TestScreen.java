@@ -13,6 +13,7 @@ public class TestScreen extends BasicScreen {
 
     World world;
     InstanceRenderer renderer;
+    BlockFaceRenderer blockFaceRenderer;
     CameraController controller;
     @Override
     public void show() {
@@ -27,9 +28,22 @@ public class TestScreen extends BasicScreen {
             .defaultEnvironment()
             .defaultCamera()
             .defaultShader();
+        renderer.camera.far=1000;
         renderer.camera.update();
         controller=new CameraController(renderer.camera);
         Gdx.input.setInputProcessor(controller);
+        blockFaceRenderer=new BlockFaceRenderer();
+        blockFaceRenderer.camera=renderer.camera;
+        world.generateCache();
+
+        int worldSize= world.calculateSize();
+        int cacheSize=world.calculateCacheSize();
+        System.out.println(worldSize+"bytes");
+        System.out.println(worldSize/1024+"kb");
+        System.out.println(worldSize/1024/1024+"mb");
+        System.out.println(cacheSize+"bytes");
+        System.out.println(cacheSize/1024+"kb");
+        System.out.println(cacheSize/1024/1024+"mb");
     }
 
     @Override
@@ -39,19 +53,26 @@ public class TestScreen extends BasicScreen {
         renderer.enableDepthAndCulling();
         renderer.clearScreen(0,0,0,1);
 
-        MeshInstance instance=new MeshInstance();
-        for(int i=0;i<16*3;i++){
-            for(int j=0;j<64;j++){
-                for(int k=0;k<16*3;k++){
-                    BlockState state=world.getBlockState(i,j,k);
-                    if(state.getBlock()==Block.STONE){
-                        instance.position.set(i,j,k);
-                        instance.update();
-                        renderer.draw(instance);
-                    }
-                }
-            }
-        }
-        renderer.flush();
+//        MeshInstance instance=new MeshInstance();
+//        for(int i=0;i<16*3;i++){
+//            for(int j=0;j<64;j++){
+//                for(int k=0;k<16*3;k++){
+//                    BlockState state=world.getBlockState(i,j,k);
+//                    if(state.getBlock()==Block.STONE){
+//                        instance.position.set(i,j,k);
+//                        instance.update();
+//                        renderer.draw(instance);
+//                    }
+//                }
+//            }
+//        }
+//        renderer.flush();
+        world.render(blockFaceRenderer);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        blockFaceRenderer.camera.viewportWidth=width;
+        blockFaceRenderer.camera.viewportHeight=height;
     }
 }
