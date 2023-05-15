@@ -1,65 +1,62 @@
-package org.systempro.project.verlet2d;
+package org.systempro.project.verlet2d.examples;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
+import org.systempro.project.scalaui.Fonts;
+import org.systempro.project.scalaui.Scene;
+import org.systempro.project.verlet2d.Particle;
+import org.systempro.project.verlet2d.Simultaion;
+import org.systempro.project.verlet2d.Stick;
 
-
-public class MeshSimulation extends BasicScreen {
-
-    public Simultaion simultaion;
-    public boolean paused=true;
+public class Blocks extends BasicScreen {
+    Scene scene;
+    Simultaion simultaion;
+    boolean paused=true;
 
     @Override
     public void show() {
         simultaion=new Simultaion(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        createBox(simultaion,100,3,1f,10,400,300);
 
-        float start=100,end=700;
-        float radius=5;
-        float y=300;
-        int n=(int)((end-start)/radius/2)-1;
-
-        FixedParticle p1=new FixedParticle(start,y,radius);
-        FixedParticle p2=new FixedParticle(end,y,radius);
-        simultaion.add(p1);
-        simultaion.add(p2);
-
-        Particle[] particles=new Particle[n];
-
-        for(int i=0;i<n;i++){
-            particles[i]=new Particle(start+(1+i)*2*radius,y,radius,0.9f,10);
-            simultaion.add(particles[i]);
-        }
-        for(int i=0;i<n-1;i++){
-            simultaion.add(new Stick(particles[i],particles[i+1],2*radius,1f));
-            simultaion.add(new Stick(particles[i],particles[i+1],2*radius,1f));
-        }
-        simultaion.add(new Stick(p1.particle,particles[0],2*radius,0.9f));
-        simultaion.add(new Stick(p2.particle,particles[n-1],2*radius,0.9f));
-//        simultaion.add(new Particle(100,100,5));
-//        simultaion.add(new Particle(100,100,5));
-//        simultaion.update(0.016f,8);
+        InfoUI.load();
+        scene=InfoUI.scene();
+        scene.layout();
     }
-
 
     @Override
     public void render(float delta) {
-        ScreenUtils.clear(0,0,0,1);
+        ScreenUtils.clear(Color.BLACK);
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
-            createBox(simultaion,1,5,1.9f,10,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
+            createBox(simultaion,1,5,1.05f,20,Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY());
         }
         if(Gdx.input.isButtonPressed(Input.Buttons.RIGHT)){
-            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,10));
+            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,20));
         }
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
 
         if(!paused)simultaion.update(0.016f,8);
         simultaion.draw();
+
+        scene.draw();
     }
+
+    @Override
+    public void resize(int width, int height) {
+        scene.resize(width,height);
+        simultaion.resize(width,height,10);
+    }
+
+    @Override
+    public void hide() {
+        Fonts.dispose();
+        simultaion.dispose();
+    }
+
 
     public void createBox(Simultaion simultaion,float mass,float r,float d,int n,float offsetX,float offsetY){
         Particle[][] particles=new Particle[n][n];
@@ -67,7 +64,7 @@ public class MeshSimulation extends BasicScreen {
             for(int j=0;j<particles[i].length;j++){
                 float x=offsetX+i*r*2*d;
                 float y=offsetY+j*r*2*d;
-                Particle p=new Particle(x,y,r,0.5f,mass);
+                Particle p=new Particle(x,y,r,0.1f,mass);
                 simultaion.particles.add(p);
                 particles[i][j]=p;
             }
@@ -76,7 +73,7 @@ public class MeshSimulation extends BasicScreen {
         for(int i=0;i<particles.length;i++){
             for(int j=0;j<particles[i].length;j++){
                 Stick stick;
-                float stiffness=1f;
+                float stiffness=0.5f;
                 if(i+1<particles.length&&j+1<particles[i].length){
                     stick=new Stick(particles[i][j],particles[i+1][j+1],r*(float) Math.sqrt(2)*d*2,stiffness);
                     simultaion.sticks.add(stick);
@@ -93,15 +90,23 @@ public class MeshSimulation extends BasicScreen {
                 }
             }
         }
-    }
+        Vector2 p00=particles[0][0].position;
+        Vector2 pn0=particles[n-1][0].position;
+        Vector2 p0n=particles[0][n-1].position;
+        Vector2 pnn=particles[n-1][n-1].position;
 
-    @Override
-    public void resize(int width, int height) {
-        simultaion.resize(width,height,20);
-    }
-
-    @Override
-    public void hide() {
-        simultaion.dispose();
+        simultaion.add(
+            new Stick(  particles[0][0],
+                        particles[n-1][n-1],
+                        new Vector2().add(p00).sub(pnn).len(),
+                1)
+        );
+        simultaion.add(
+            new Stick(  particles[n-1][0],
+                        particles[0][n-1],
+                        new Vector2().add(pn0).sub(p0n).len(),
+                1
+            )
+        );
     }
 }

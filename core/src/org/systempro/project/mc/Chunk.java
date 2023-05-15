@@ -9,7 +9,16 @@ public class Chunk {
 
     public Chunk(int x,int y,PerlinNoise2d noise2d,TerrainGenerationParameters params){
         cache=new ArrayList<>();
-        blockStates=new BlockState[16][256][16];
+//        blockStates=new BlockState[16][256][16];
+
+        blockStates=new BlockState[16][][];
+        for(int i=0;i<16;i++){
+            blockStates[i]=new BlockState[256][];
+            for(int j=0;j<256;j++){
+                blockStates[i][j]=new BlockState[16];
+            }
+        }
+
         for(int i=0;i<16;i++){
             for(int k=0;k<16;k++){
                 float dx=x*16+i,dy=y*16+k;

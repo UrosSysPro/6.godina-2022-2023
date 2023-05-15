@@ -13,6 +13,7 @@ public class World {
         );
         chunks=new Chunk[20][20];
         for(int i=0;i<chunks.length;i++){
+//            chunks[i]=new Chunk[20];
             for(int j=0;j<chunks[i].length;j++){
                 chunks[i][j]=new Chunk(i,j,noise2d,params);
             }

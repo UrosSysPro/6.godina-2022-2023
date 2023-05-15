@@ -3,12 +3,12 @@ package org.systempro.project.verlet2d;
 import java.util.concurrent.Future;
 
 public class CollisionRunnable implements Runnable{
-    Future<Void> dependency1,dependency2;
+//    Future<Void> dependency1,dependency2;
     int start,end;
     HashTable table;
-    public CollisionRunnable(HashTable table, int start, int end, Future<Void> dependency1,Future<Void> dependency2){
-        this.dependency1=dependency1;
-        this.dependency2=dependency2;
+    public CollisionRunnable(HashTable table, int start, int end){
+//        this.dependency1=null;
+//        this.dependency2=null;
         this.start=start;
         this.end=end;
         this.table=table;
@@ -20,6 +20,7 @@ public class CollisionRunnable implements Runnable{
                 if(x+i<0||x+i>=table.cells.length||y+j<0||y+j>=table.cells[0].length)continue;
                 for(Particle p2:table.cells[x+i][y+j]){
                     if(p1==p2)continue;
+//                    System.out.println("Collision");
                     Particle.resolveCollision(p1,p2);
                 }
             }
@@ -29,13 +30,13 @@ public class CollisionRunnable implements Runnable{
 
     @Override
     public void run() {
-        try{
-            if(dependency1!=null)dependency1.get();
-            if(dependency2!=null)dependency2.get();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
+//        try{
+//            if(dependency1!=null)dependency1.get();
+//            if(dependency2!=null)dependency2.get();
+//        }catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        System.out.println("Run "+start+" "+end);
         for(int i=start;i<=end;i++){
             for(int j=0;j<table.cells[i].length;j++){
                 for(Particle p1:table.cells[i][j]){

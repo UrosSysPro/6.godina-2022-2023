@@ -24,7 +24,7 @@ public class Simultaion implements Disposable {
 
     //deo za menjanje
     public ExecutorService service;
-    public Future<Void>[] futures;
+    public Future[] futures;
 
     public Simultaion(float width,float height){
         this.width=width;
@@ -40,6 +40,9 @@ public class Simultaion implements Disposable {
         camera2d.setSize(width,height);
         camera2d.update();
         renderer.setProjectionMatrix(camera2d.combined4);
+
+        service=Executors.newFixedThreadPool(16);
+        futures=new Future[100];
     }
     public void add(Particle p){
         particles.add(p);
@@ -52,13 +55,16 @@ public class Simultaion implements Disposable {
         if(delta>0.05f)delta=0.05f;
         float subDelta=delta/subSteps;
         for(int i=0;i<subSteps;i++){
-            stickConstraints();
+
             //neki drugi collision listener
-//            collisionConstraintHashTable();
             fixedConstraint();
+//            collisionContraintParallel();
+//            collisionConstraintHashTable();
+            collisionConstraintNSquared();
             boxConstraint();
             applyForces();
             updateInertia(subDelta);
+            stickConstraints();
             oldDelta=subDelta;
         }
     }
@@ -145,7 +151,41 @@ public class Simultaion implements Disposable {
     }
 
     public void collisionContraintParallel(){
+        try{
+            table.removeAll();
+            for(Particle p:particles){
+                table.insert(p);
+            }
+            for(FixedParticle fixedParticle:fixedParticles){
+                table.insert(fixedParticle.particle);
+            }
+            int numOfCols=10;
+            for(int i=0;i<table.cells.length;i+=numOfCols*2){
+                int index=i/numOfCols;
+                int start=i;
+                int end=Math.min(i+numOfCols-1,table.cells.length-1);
+                futures[index]=service.submit(new CollisionRunnable(table,start,end));
+//                System.out.println("Started: "+index+" "+start+" "+end);
+            }
+            for(int i=0;i<table.cells.length;i+=numOfCols*2){
+                int index=i/numOfCols;
+                futures[index].get();
+            }
+            for(int i=numOfCols;i<table.cells.length;i+=numOfCols*2){
+                int index=i/numOfCols;
+                int start=i;
+                int end=Math.min(i+numOfCols-1,table.cells.length-1);
+                futures[index]=service.submit(new CollisionRunnable(table,start,end));
+//                System.out.println("Started: "+index+" "+start+" "+end);
+            }
+            for(int i=numOfCols;i<table.cells.length;i+=numOfCols*2){
+                int index=i/numOfCols;
+                futures[index].get();
+            }
 
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void collisionConstraintNSquared(){
@@ -226,6 +266,6 @@ public class Simultaion implements Disposable {
 
     @Override
     public void dispose() {
-
+        service.shutdown();
     }
 }
