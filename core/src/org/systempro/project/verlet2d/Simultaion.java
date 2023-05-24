@@ -58,11 +58,12 @@ public class Simultaion implements Disposable {
 
             //neki drugi collision listener
             fixedConstraint();
-//            collisionContraintParallel();
+            collisionContraintParallel();
 //            collisionConstraintHashTable();
-            collisionConstraintNSquared();
+//            collisionConstraintNSquared();
             boxConstraint();
-            applyForces();
+//            applyForces();
+            applyParticleGravity();
             updateInertia(subDelta);
             stickConstraints();
             oldDelta=subDelta;
@@ -81,6 +82,21 @@ public class Simultaion implements Disposable {
                 gravity.x,
                 gravity.y
             );
+        }
+    }
+    public void applyParticleGravity(){
+//        Vector2 gravity=new Vector2(0,-300f);
+        for(Particle p1:particles){
+            for(Particle p2:particles){
+                float gama=100f;
+                if (p1==p2)continue;
+                float dx=p2.position.x-p1.position.x;
+                float dy=p2.position.y-p1.position.y;
+                float r=(float)Math.sqrt(dx*dx+dy*dy);
+                dx*=p2.mass*gama/r/r/r;
+                dy*=p2.mass*gama/r/r/r;
+                p1.acceleration.add(dx,dy);
+            }
         }
     }
     public void fixedConstraint(){

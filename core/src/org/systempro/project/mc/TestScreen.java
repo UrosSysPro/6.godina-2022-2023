@@ -1,11 +1,13 @@
 package org.systempro.project.mc;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.basics3d.CameraController;
+import org.systempro.project.basics3d.CameraController2;
 import org.systempro.project.basics3d.InstanceRenderer;
 import org.systempro.project.basics3d.MeshInstance;
 
@@ -14,9 +16,13 @@ public class TestScreen extends BasicScreen {
     World world;
     InstanceRenderer renderer;
     BlockFaceRenderer blockFaceRenderer;
-    CameraController controller;
+    SkyBoxRenderer skyBoxRenderer;
+    CameraController2 controller;
     @Override
     public void show() {
+
+        skyBoxRenderer=new SkyBoxRenderer();
+
         world=new World();
 
         Mesh mesh=new ObjLoader()
@@ -30,7 +36,7 @@ public class TestScreen extends BasicScreen {
             .defaultShader();
         renderer.camera.far=1000;
         renderer.camera.update();
-        controller=new CameraController(renderer.camera);
+        controller=new CameraController2(renderer.camera,0.5f,2f,true);
         Gdx.input.setInputProcessor(controller);
         blockFaceRenderer=new BlockFaceRenderer();
         blockFaceRenderer.camera=renderer.camera;
@@ -50,23 +56,12 @@ public class TestScreen extends BasicScreen {
     public void render(float delta) {
         controller.update(delta);
         Gdx.gl20.glViewport(0,0,Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        renderer.enableDepthAndCulling();
         renderer.clearScreen(0,0,0,1);
 
-//        MeshInstance instance=new MeshInstance();
-//        for(int i=0;i<16*3;i++){
-//            for(int j=0;j<64;j++){
-//                for(int k=0;k<16*3;k++){
-//                    BlockState state=world.getBlockState(i,j,k);
-//                    if(state.getBlock()==Block.STONE){
-//                        instance.position.set(i,j,k);
-//                        instance.update();
-//                        renderer.draw(instance);
-//                    }
-//                }
-//            }
-//        }
-//        renderer.flush();
+        skyBoxRenderer.draw(controller.getDirection());
+
+        renderer.enableDepthAndCulling();
+        Gdx.gl20.glClear(GL20.GL_DEPTH_BUFFER_BIT);
         world.render(blockFaceRenderer);
     }
 

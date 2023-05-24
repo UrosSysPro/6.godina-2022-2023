@@ -87,6 +87,62 @@ public class Particle {
         }
     }
 
+
+    public static void resolveCollision1(Particle p1,Particle p2){
+        float minDistance=p1.radius+p2.radius;
+        float distance=distance(p1.position,p2.position);
+        if(distance<minDistance) {
+            float v1x = p1.position.x - p1.prevPosition.x;
+            float v1y = p1.position.y - p1.prevPosition.y;
+
+            float v2x = p2.position.x - p2.prevPosition.x;
+            float v2y = p2.position.y - p2.prevPosition.y;
+
+            float vrelX = v1x - v2x;
+            float vrelY = v1y - v2y;
+
+            float normalX = p2.position.x - p1.position.x;
+            float normalY = p2.position.y - p1.position.y;
+            float len = (float) Math.sqrt(normalX * normalX + normalY * normalY);
+            normalX /= len;
+            normalY /= len;
+
+            float c = Math.min(p1.restitution, p2.restitution);
+            float impulseMagnitude = -(1 + c) * (vrelX * normalX + vrelY * normalY) / (p1.invMass + p2.invMass);
+
+
+//            Vector2 diff = new Vector2(p1.position).sub(p2.position).nor();
+            float diffX=p1.position.x-p2.position.x;
+            float diffY=p1.position.y-p2.position.y;
+            len=(float) Math.sqrt(diffX * diffX + diffY * diffY);
+            diffX/=len;
+            diffY/=len;
+
+            float delta = (minDistance - distance);
+            diffX *= delta;
+            diffY *= delta;
+            p1.position.add(
+                diffX * p1.invMass / (p1.invMass + p2.invMass),
+                diffY * p1.invMass / (p1.invMass + p2.invMass)
+            );
+            p2.position.sub(
+                diffX * p2.invMass / (p1.invMass + p2.invMass),
+                diffY * p2.invMass / (p1.invMass + p2.invMass)
+            );
+
+
+            v1x += normalX * impulseMagnitude / p1.mass;
+            v1y += normalY * impulseMagnitude / p1.mass;
+
+            v2x -= normalX * impulseMagnitude / p2.mass;
+            v2y -= normalY * impulseMagnitude / p2.mass;
+
+
+            p1.prevPosition.set(p1.position).sub(v1x, v1y);
+            p2.prevPosition.set(p2.position).sub(v2x, v2y);
+        }
+    }
+
     public static float distance(Vector2 v1,Vector2 v2){
         float dx=v1.x-v2.x;
         float dy=v1.y-v2.y;
@@ -94,16 +150,16 @@ public class Particle {
     }
 
 
-//    public static void resolveCollision(Particle p1,Particle p2){
-//        float minDistance=p1.radius+p2.radius;
-//        float distance=distance(p1.position,p2.position);
-//        if(distance<minDistance){
-//            Vector2 diff=new Vector2(p1.position).sub(p2.position).nor();
-//            float delta=(minDistance-distance)/2;
-//            diff.x*=delta;
-//            diff.y*=delta;
-//            p1.position.add(diff);
-//            p2.position.sub(diff);
-//        }
-//    }
+    public static void resolveCollision2(Particle p1,Particle p2){
+        float minDistance=p1.radius+p2.radius;
+        float distance=distance(p1.position,p2.position);
+        if(distance<minDistance){
+            Vector2 diff=new Vector2(p1.position).sub(p2.position).nor();
+            float delta=(minDistance-distance)/2;
+            diff.x*=delta;
+            diff.y*=delta;
+            p1.position.add(diff);
+            p2.position.sub(diff);
+        }
+    }
 }

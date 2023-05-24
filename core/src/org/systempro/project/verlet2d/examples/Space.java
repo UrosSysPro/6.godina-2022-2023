@@ -3,7 +3,6 @@ package org.systempro.project.verlet2d.examples;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import org.systempro.project.BasicScreen;
 import org.systempro.project.scalaui.Fonts;
@@ -12,14 +11,14 @@ import org.systempro.project.scalaui.Scene;
 import org.systempro.project.scalaui.widgets.Text;
 import org.systempro.project.verlet2d.Particle;
 import org.systempro.project.verlet2d.Simultaion;
-import org.systempro.project.verlet2d.Stick;
 
-public class Pool extends BasicScreen {
-
+public class Space extends BasicScreen {
     Scene scene;
     Key<Text>[] keys;
     Simultaion simultaion;
-    boolean paused=true;
+
+    float startX,startY;
+    boolean paused=true,down=false;
 
     @Override
     public void show() {
@@ -35,8 +34,19 @@ public class Pool extends BasicScreen {
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);
 
-        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)){
-            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,20));
+        if(Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& !down){
+//            simultaion.add(new Particle(Gdx.input.getX(),Gdx.graphics.getHeight()-Gdx.input.getY(),5,0.9f,20));
+            startX=Gdx.input.getX();
+            startY=Gdx.graphics.getHeight()-Gdx.input.getY();
+            down=true;
+        }
+        if(!Gdx.input.isButtonPressed(Input.Buttons.LEFT)&& down){
+            float x=Gdx.input.getX();
+            float y=Gdx.graphics.getHeight()-Gdx.input.getY();
+            Particle p=new Particle(x,y,5,0.9f,20);
+            p.prevPosition.set(x-(x-startX)/1000,y-(y-startY)/1000);
+            simultaion.add(p);
+            down=false;
         }
 
         if(Gdx.input.isButtonJustPressed(Input.Buttons.RIGHT)){
@@ -74,5 +84,4 @@ public class Pool extends BasicScreen {
         Fonts.dispose();
         simultaion.dispose();
     }
-
 }

@@ -39,9 +39,17 @@ public class Blocks extends BasicScreen {
 
         if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))paused=!paused;
 
+        long start=System.currentTimeMillis();
         if(!paused)simultaion.update(0.016f,8);
+        long physics=System.currentTimeMillis();
         simultaion.draw();
+        long draw=System.currentTimeMillis();
 
+        InfoUI.keys()[0].widget().text_$eq("physics: "+(physics-start)+"ms");
+        InfoUI.keys()[1].widget().text_$eq("draw: "+(draw-physics)+"ms");
+        InfoUI.keys()[2].widget().text_$eq("particles: "+simultaion.particles.size());
+
+        scene.layout();
         scene.draw();
     }
 

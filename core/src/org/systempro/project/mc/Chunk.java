@@ -28,7 +28,9 @@ public class Chunk {
                 height=height* params.randomHeight+ params.baseHeight;
                 for(int j=0;j<256;j++){
                     Block b=Block.AIR;
-                    if(j<height)b=Block.STONE;
+                    if(j<height)b=Block.GRASS;
+                    if(j<height-1)b=Block.DIRT;
+                    if(j<height-4)b=Block.STONE;
                     blockStates[i][j][k]=new BlockState(b);
                 }
             }

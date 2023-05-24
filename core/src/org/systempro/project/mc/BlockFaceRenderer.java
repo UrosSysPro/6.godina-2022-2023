@@ -1,15 +1,13 @@
 package org.systempro.project.mc;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Mesh;
-import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class BlockFaceRenderer {
+    private Texture texture;
     private Mesh mesh;
     private ShaderProgram shader;
     public Camera camera;
@@ -44,14 +42,17 @@ public class BlockFaceRenderer {
         if(!shader.isCompiled()){
             System.out.println(shader.getLog());
         }
+
+        texture=new Texture("mc/texture.png");
+        texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
     }
 
     public void draw(BlockFaceCache cache,int chunkX,int chunkY){
         if(instancesToDraw>=maxInstances)flush();
         int index=instancesToDraw*instanceSize;
         instanceData[index+0]=cache.strana;
-        instanceData[index+1]=0;//cache.block.texCoordX
-        instanceData[index+2]=0;//cache.block.texCoordY
+        instanceData[index+1]=cache.block.textureX+(cache.strana==4?1:0);//cache.block.texCoordX
+        instanceData[index+2]=cache.block.textureY;//cache.block.texCoordY
         instanceData[index+3]=chunkX*16+cache.localPositionX;
         instanceData[index+4]=cache.localPositionY;
         instanceData[index+5]=chunkY*16+cache.localPositionZ;
@@ -61,6 +62,10 @@ public class BlockFaceRenderer {
         shader.bind();
         shader.setUniformMatrix("view",camera.view);
         shader.setUniformMatrix("projection",camera.projection);
+        texture.bind(0);
+        shader.setUniformi("texture0",0);
+        shader.setUniformf("textureWidth",texture.getWidth());
+        shader.setUniformf("textureHeight",texture.getWidth());
         mesh.setInstanceData(instanceData,0,instancesToDraw*instanceSize);
         mesh.render(shader,GL20.GL_TRIANGLES);
         instancesToDraw=0;
