@@ -1,4 +1,4 @@
-package org.systempro.project.mc;
+package org.systempro.project.mc.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -6,10 +6,10 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import org.systempro.project.BasicScreen;
-import org.systempro.project.basics3d.CameraController;
 import org.systempro.project.basics3d.CameraController2;
 import org.systempro.project.basics3d.InstanceRenderer;
 import org.systempro.project.basics3d.MeshInstance;
+import org.systempro.project.mc.SkyBoxRenderer;
 
 public class TestScreen extends BasicScreen {
 
@@ -40,16 +40,10 @@ public class TestScreen extends BasicScreen {
         Gdx.input.setInputProcessor(controller);
         blockFaceRenderer=new BlockFaceRenderer();
         blockFaceRenderer.camera=renderer.camera;
+
         world.generateCache();
 
-        int worldSize= world.calculateSize();
-        int cacheSize=world.calculateCacheSize();
-        System.out.println(worldSize+"bytes");
-        System.out.println(worldSize/1024+"kb");
-        System.out.println(worldSize/1024/1024+"mb");
-        System.out.println(cacheSize+"bytes");
-        System.out.println(cacheSize/1024+"kb");
-        System.out.println(cacheSize/1024/1024+"mb");
+        System.out.println(new BlockPos().hashCode()==new BlockPos().hashCode());
     }
 
     @Override

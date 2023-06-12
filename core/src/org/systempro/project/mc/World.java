@@ -7,9 +7,9 @@ public class World {
     public World(){
         PerlinNoise2d noise2d=new PerlinNoise2d();
         TerrainGenerationParameters params=new TerrainGenerationParameters(
-          20,
-          3,
-          30
+          100,
+          50,
+          100
         );
         chunks=new Chunk[20][20];
         for(int i=0;i<chunks.length;i++){
