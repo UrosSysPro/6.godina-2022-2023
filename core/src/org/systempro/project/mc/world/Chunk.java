@@ -12,12 +12,12 @@ public class Chunk {
         blockStates=new HashMap<>();
         cache=new HashMap<>();
         for(int i=0;i<16;i++){
-            for(int j=0;j<5;j++){
+            for(int j=0;j<60;j++){
                 for(int k=0;k<16;k++){
                     BlockPos pos=new BlockPos(i,j,k);
                     Block block=Block.STONE;
-                    if(j==3)block=Block.DIRT;
-                    if(j==4)block=Block.GRASS;
+                    if(j==58)block=Block.DIRT;
+                    if(j==59)block=Block.GRASS;
                     BlockState state=new BlockState(block);
                     blockStates.put(pos,state);
                 }
@@ -51,6 +51,7 @@ public class Chunk {
             if(world.getBlockState(x,y-1,z).getBlock()== Block.AIR){
                 list.add(new BlockFaceCache(5,state.getBlock(),pos.x,pos.y,pos.z));
             }
+            if(list.isEmpty())continue;
             BlockFaceCache[] array=new BlockFaceCache[list.size()];
             for(int i=0;i<array.length;i++)array[i]=list.get(i);
             cache.put(pos, array);

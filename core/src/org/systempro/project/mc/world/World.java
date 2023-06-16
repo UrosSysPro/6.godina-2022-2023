@@ -6,7 +6,7 @@ public class World {
     private Chunk[][] chunks;
 
     public World(){
-        chunks=new Chunk[40][40];
+        chunks=new Chunk[10][10];
         for(int i=0;i<chunks.length;i++){
             for(int j=0;j<chunks[i].length;j++){
                 chunks[i][j]=new Chunk();

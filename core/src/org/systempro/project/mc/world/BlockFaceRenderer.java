@@ -3,6 +3,7 @@ package org.systempro.project.mc.world;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 
 public class BlockFaceRenderer {
     private Texture texture;
@@ -13,8 +14,10 @@ public class BlockFaceRenderer {
     private int instanceSize=6;
     private int instancesToDraw=0;
     private float[] instanceData=new float[maxInstances*instanceSize];
+    public Vector3 sunDirection;
 
     public BlockFaceRenderer(){
+        sunDirection=new Vector3(0,-1,0).nor();
         mesh=new Mesh(true,4,6,
             new VertexAttribute(VertexAttributes.Usage.Position,2,"position")
         );
@@ -34,14 +37,17 @@ public class BlockFaceRenderer {
             new VertexAttribute(VertexAttributes.Usage.Position,3,"worldPosition")
         );
         ShaderProgram.pedantic=false;
-        String vertex= Gdx.files.internal("mc/vertex.glsl").readString();
-        String fragment= Gdx.files.internal("mc/fragment.glsl").readString();
+        String vertex="";
+        vertex+=Gdx.files.internal("mc/world/math.glsl").readString();
+        vertex+=Gdx.files.internal("mc/world/vertex.glsl").readString();
+//        String vertex= Gdx.files.internal("mc/vertex.glsl").readString();
+        String fragment= Gdx.files.internal("mc/world/fragment.glsl").readString();
         shader=new ShaderProgram(vertex,fragment);
         if(!shader.isCompiled()){
             System.out.println(shader.getLog());
         }
 
-        texture=new Texture("mc/texture.png");
+        texture=new Texture("mc/world/texture.png");
         texture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Nearest);
     }
 
@@ -64,6 +70,8 @@ public class BlockFaceRenderer {
         shader.setUniformi("texture0",0);
         shader.setUniformf("textureWidth",texture.getWidth());
         shader.setUniformf("textureHeight",texture.getWidth());
+        shader.setUniformf("sunDirection",sunDirection);
+        shader.setUniformf("cameraPosition",camera.position);
         mesh.setInstanceData(instanceData,0,instancesToDraw*instanceSize);
         mesh.render(shader,GL20.GL_TRIANGLES);
         instancesToDraw=0;
